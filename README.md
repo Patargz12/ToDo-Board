@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TaskFlow
+
+A Kanban-style to-do board application built with Next.js, TypeScript, and Supabase.
+
+## Features
+
+**Authentication** — Email/password and Google sign-in via Supabase Auth. Protected routes with middleware.
+
+**Task Management** — Create categories (columns) and tickets. Each ticket has a title, description, expiry date, and a user-defined priority level with custom colors.
+
+**Drag and Drop** — Built with the native HTML Drag and Drop API. Supports reordering columns, moving tickets between categories, and updating priority via drag.
+
+**Draft Auto-Save** — Ticket descriptions are saved as drafts automatically when editing is interrupted (blur, navigation, tab close).
+
+**Expiry Notifications** — Color-coded badges based on expiry proximity, toast alerts for approaching deadlines, and a configurable notification threshold.
+
+**Update History** — Board-level history (column reorders, category changes) and card-level history (edits, moves, priority updates) with timestamps.
+
+## Tech Stack
+
+- Next.js 15 (App Router)
+- TypeScript (strict mode)
+- Tailwind CSS 4 + shadcn/ui
+- Redux Toolkit
+- Supabase (Auth + PostgreSQL)
+- Native HTML Drag and Drop API
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js >= 18
+- A Supabase project with Auth enabled
+
+### Setup
+
+```bash
+git clone https://github.com/Patargz12/ToDo-Board.git
+cd todoboard 
+npm install
+cp .env.example .env.local
+```
+
+Fill in your Supabase credentials in `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Then run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Docker
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+docker-compose up --build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── (auth)/             # Login, register
+│   ├── (dashboard)/board/  # Main board page
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── ui/                 # shadcn/ui
+│   ├── board/              # Board, Column, Card
+│   ├── auth/               # Auth forms
+│   ├── modals/             # Create/edit modals
+│   ├── notifications/
+│   └── history/
+├── hooks/
+├── lib/
+│   ├── supabase.ts
+│   ├── utils.ts
+│   └── validators.ts
+├── store/
+│   ├── slices/
+│   │   ├── authSlice.ts
+│   │   ├── boardSlice.ts
+│   │   ├── historySlice.ts
+│   │   └── notificationSlice.ts
+│   ├── hooks.ts
+│   └── index.ts
+├── types/
+└── middleware.ts
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev         # Start dev server
+npm run build       # Production build
+npm run start       # Start production server
+npm run lint        # Run ESLint
+npm run type-check  # TypeScript check
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Git Workflow
 
-## Deploy on Vercel
+- `main` — production-ready
+- `develop` — integration branch
+- Feature branches: `feat/auth`, `feat/board-dnd`, `feat/notifications`, etc.
+- Commit messages follow Conventional Commits
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

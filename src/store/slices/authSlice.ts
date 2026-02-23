@@ -91,6 +91,10 @@ export const signIn = createAsyncThunk(
 
       storeAuth(authData.session.access_token, user);
 
+      if (typeof window !== 'undefined') {
+        window.location.replace('/board');
+      }
+
       return { user, token: authData.session.access_token };
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message || 'Login failed');
