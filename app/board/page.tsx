@@ -7,6 +7,7 @@ import { CategoryColumn } from '@/src/components/board/CategoryColumn';
 import { AddCategoryForm } from '@/src/components/board/AddCategoryForm';
 import { useAppDispatch, useAppSelector } from '@/src/store/store';
 import { fetchCategories } from '@/src/store/slices/boardSlice';
+import { fetchTickets } from '@/src/store/slices/ticketsSlice';
 
 function BoardContent() {
   const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ function BoardContent() {
 
   useEffect(() => {
     dispatch(fetchCategories());
+    dispatch(fetchTickets());
   }, [dispatch]);
 
   return (

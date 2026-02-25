@@ -2,20 +2,28 @@
 
 import { useState, useRef } from 'react';
 import { Category } from '@/src/types';
-import { useAppDispatch } from '@/src/store/store';
+import { useAppDispatch, useAppSelector } from '@/src/store/store';
 import { updateCategory, deleteCategory } from '@/src/store/slices/boardSlice';
+import { TicketCard } from './TicketCard';
+import { CreateTicketModal } from './CreateTicketModal';
 
 interface CategoryColumnProps {
   category: Category;
-  ticketCount?: number;
-  children?: React.ReactNode;
 }
 
-export function CategoryColumn({ category, ticketCount = 0, children }: CategoryColumnProps) {
+export function CategoryColumn({ category }: CategoryColumnProps) {
   const dispatch = useAppDispatch();
+  const tickets = useAppSelector((state) =>
+    state.tickets.tickets
+      .filter((t) => t.categoryId === category.id)
+      .slice()
+      .sort((a, b) => a.position - b.position)
+  );
+
   const [isEditing, setIsEditing] = useState(false);
   const [nameValue, setNameValue] = useState(category.name);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDoubleClick = () => {
@@ -47,6 +55,7 @@ export function CategoryColumn({ category, ticketCount = 0, children }: Category
   };
 
   return (
+    <>
     <div
       className="w-80 flex-shrink-0 bg-gray-100 rounded-xl shadow-sm flex flex-col"
       style={{ minHeight: 'calc(100vh - 120px)' }}
@@ -75,7 +84,7 @@ export function CategoryColumn({ category, ticketCount = 0, children }: Category
             </span>
           )}
           <span className="text-xs text-gray-400 bg-gray-200 rounded-full px-2 py-0.5 font-medium flex-shrink-0">
-            {ticketCount}
+            {tickets.length}
           </span>
         </div>
 
@@ -113,11 +122,16 @@ export function CategoryColumn({ category, ticketCount = 0, children }: Category
       </div>
 
       <div className="flex-1 px-3 py-2 flex flex-col gap-2 overflow-y-auto">
-        {children}
+        {tickets.map((ticket) => (
+          <TicketCard key={ticket.id} ticket={ticket} />
+        ))}
       </div>
 
       <div className="px-3 pb-3 pt-1">
-        <button className="w-full flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-200 px-3 py-2 rounded-lg transition-colors">
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="w-full flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-200 px-3 py-2 rounded-lg transition-colors"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -126,5 +140,13 @@ export function CategoryColumn({ category, ticketCount = 0, children }: Category
         </button>
       </div>
     </div>
+
+    {showCreateModal && (
+      <CreateTicketModal
+        categoryId={category.id}
+        onClose={() => setShowCreateModal(false)}
+      />
+    )}
+    </>
   );
 }
