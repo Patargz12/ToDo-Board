@@ -8,11 +8,26 @@ import { AddCategoryForm } from '@/src/components/board/AddCategoryForm';
 import { useAppDispatch, useAppSelector } from '@/src/store/store';
 import { fetchCategories } from '@/src/store/slices/boardSlice';
 import { fetchTickets } from '@/src/store/slices/ticketsSlice';
+import { useDragAndDrop } from '@/src/hooks/useDragAndDrop';
 
 function BoardContent() {
   const dispatch = useAppDispatch();
   const { categories, loading } = useAppSelector((state) => state.board);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  const {
+    dragState,
+    handleTicketDragStart,
+    handleTicketDragEnd,
+    handleCategoryDragStart,
+    handleCategoryDragEnd,
+    handleTicketDragOver,
+    handleColumnDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    handleTicketDrop,
+    handleColumnDrop,
+  } = useDragAndDrop(categories);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -30,7 +45,21 @@ function BoardContent() {
         ) : (
           <div className="flex gap-4 items-start" style={{ minHeight: 'calc(100vh - 120px)' }}>
             {categories.map((category) => (
-              <CategoryColumn key={category.id} category={category} />
+              <CategoryColumn
+                key={category.id}
+                category={category}
+                dragState={dragState}
+                onTicketDragStart={handleTicketDragStart}
+                onTicketDragEnd={handleTicketDragEnd}
+                onCategoryDragStart={handleCategoryDragStart}
+                onCategoryDragEnd={handleCategoryDragEnd}
+                onTicketDragOver={handleTicketDragOver}
+                onColumnDragOver={handleColumnDragOver}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onTicketDrop={handleTicketDrop}
+                onColumnDrop={handleColumnDrop}
+              />
             ))}
 
             {showAddForm ? (

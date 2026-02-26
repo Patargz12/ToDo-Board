@@ -5,6 +5,9 @@ import { Ticket } from '@/src/types';
 interface TicketCardProps {
   ticket: Ticket;
   onClick?: () => void;
+  onDragStart?: (e: React.DragEvent, ticketId: string, categoryId: string) => void;
+  onDragEnd?: () => void;
+  isDragging?: boolean;
 }
 
 function getExpiryInfo(expiryDate: string): { label: string; colorClass: string; dotColor: string } {
@@ -32,14 +35,23 @@ function getExpiryInfo(expiryDate: string): { label: string; colorClass: string;
   return { label: `${diffDays} days left`, colorClass: 'text-green-600', dotColor: 'bg-green-500' };
 }
 
-export function TicketCard({ ticket, onClick }: TicketCardProps) {
+export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging }: TicketCardProps) {
   const expiry = ticket.expiryDate ? getExpiryInfo(ticket.expiryDate) : null;
 
   return (
     <div
+      data-ticket-id={ticket.id}
+      draggable={true}
       onClick={onClick}
-      className="bg-white rounded-lg px-3 py-2.5 shadow-sm border border-gray-100 cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all duration-150 group"
-      style={{ borderLeftWidth: 3, borderLeftColor: ticket.priorityColor, borderLeftStyle: 'solid' }}
+      onDragStart={(e) => onDragStart?.(e, ticket.id, ticket.categoryId)}
+      onDragEnd={() => onDragEnd?.()}
+      className="bg-white rounded-lg px-3 py-2.5 shadow-sm border border-gray-100 cursor-grab active:cursor-grabbing hover:-translate-y-0.5 hover:shadow-md transition-all duration-150 group select-none"
+      style={{
+        borderLeftWidth: 3,
+        borderLeftColor: ticket.priorityColor,
+        borderLeftStyle: 'solid',
+        opacity: isDragging ? 0.4 : 1,
+      }}
     >
       <div className="flex items-start justify-between gap-2 mb-1.5">
         <p className="text-sm text-gray-800 font-medium leading-snug line-clamp-2 flex-1">

@@ -5,13 +5,39 @@ import { Category } from '@/src/types';
 import { useAppDispatch, useAppSelector } from '@/src/store/store';
 import { updateCategory, deleteCategory } from '@/src/store/slices/boardSlice';
 import { TicketCard } from './TicketCard';
+import { DropIndicator } from './DropIndicator';
 import { CreateTicketModal } from './CreateTicketModal';
+import { DragState } from '@/src/hooks/useDragAndDrop';
 
 interface CategoryColumnProps {
   category: Category;
+  dragState: DragState;
+  onCategoryDragStart: (e: React.DragEvent, categoryId: string) => void;
+  onCategoryDragEnd: () => void;
+  onColumnDragOver: (e: React.DragEvent, categoryId: string) => void;
+  onColumnDrop: (e: React.DragEvent, categoryId: string) => void;
+  onTicketDragStart: (e: React.DragEvent, ticketId: string, categoryId: string) => void;
+  onTicketDragEnd: () => void;
+  onTicketDragOver: (e: React.DragEvent, categoryId: string, tickets: { id: string }[]) => void;
+  onTicketDrop: (e: React.DragEvent, categoryId: string, tickets: { id: string; categoryId: string }[]) => void;
+  onDragEnter: (e: React.DragEvent, categoryId: string) => void;
+  onDragLeave: (e: React.DragEvent, categoryId: string) => void;
 }
 
-export function CategoryColumn({ category }: CategoryColumnProps) {
+export function CategoryColumn({
+  category,
+  dragState,
+  onCategoryDragStart,
+  onCategoryDragEnd,
+  onColumnDragOver,
+  onColumnDrop,
+  onTicketDragStart,
+  onTicketDragEnd,
+  onTicketDragOver,
+  onTicketDrop,
+  onDragEnter,
+  onDragLeave,
+}: CategoryColumnProps) {
   const dispatch = useAppDispatch();
   const tickets = useAppSelector((state) =>
     state.tickets.tickets
@@ -54,14 +80,43 @@ export function CategoryColumn({ category }: CategoryColumnProps) {
     setShowDeleteConfirm(false);
   };
 
+  const isColumnBeingDragged = dragState.draggedCategoryId === category.id;
+  const isColumnDragTarget =
+    dragState.dragType === 'category' &&
+    dragState.highlightedCategoryId === category.id &&
+    dragState.draggedCategoryId !== category.id;
+  const isTicketDropTarget =
+    dragState.dragType === 'ticket' &&
+    dragState.dropTargetCategoryId === category.id;
+
   return (
     <>
     <div
-      className="w-80 flex-shrink-0 bg-gray-100 rounded-xl shadow-sm flex flex-col"
-      style={{ minHeight: 'calc(100vh - 120px)' }}
+      onDragOver={(e) => {
+        if (dragState.dragType === 'category') {
+          onColumnDragOver(e, category.id);
+        }
+      }}
+      onDrop={(e) => {
+        if (dragState.dragType === 'category') {
+          onColumnDrop(e, category.id);
+        }
+      }}
+      onDragEnter={(e) => onDragEnter(e, category.id)}
+      onDragLeave={(e) => onDragLeave(e, category.id)}
+      className="w-80 flex-shrink-0 rounded-xl shadow-sm flex flex-col transition-all duration-150"
+      style={{
+        minHeight: 'calc(100vh - 120px)',
+        backgroundColor: isColumnDragTarget ? '#dbeafe' : '#f3f4f6',
+        outline: isColumnDragTarget ? '2px solid #3b82f6' : undefined,
+        opacity: isColumnBeingDragged ? 0.5 : 1,
+      }}
     >
       <div
-        className="flex items-center justify-between px-4 py-3 border-b border-gray-200"
+        draggable={!isEditing}
+        onDragStart={(e) => !isEditing && onCategoryDragStart(e, category.id)}
+        onDragEnd={() => onCategoryDragEnd()}
+        className="flex items-center justify-between px-4 py-3 border-b border-gray-200 cursor-grab active:cursor-grabbing"
         style={{ borderLeftWidth: 4, borderLeftColor: category.color, borderLeftStyle: 'solid', borderRadius: '0.75rem 0.75rem 0 0' }}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -72,13 +127,14 @@ export function CategoryColumn({ category }: CategoryColumnProps) {
               onChange={(e) => setNameValue(e.target.value)}
               onBlur={handleNameSave}
               onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
               className="flex-1 bg-white border border-gray-300 rounded px-2 py-0.5 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
             <span
               onDoubleClick={handleDoubleClick}
-              className="flex-1 text-sm font-semibold text-gray-800 truncate cursor-pointer select-none"
-              title="Double-click to edit"
+              className="flex-1 text-sm font-semibold text-gray-800 truncate select-none"
+              title="Double-click to edit, drag to reorder"
             >
               {category.name}
             </span>
@@ -91,7 +147,7 @@ export function CategoryColumn({ category }: CategoryColumnProps) {
         <div className="relative ml-2">
           {!showDeleteConfirm ? (
             <button
-              onClick={() => setShowDeleteConfirm(true)}
+              onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(true); }}
               className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-gray-200"
               title="Delete column"
             >
@@ -121,10 +177,44 @@ export function CategoryColumn({ category }: CategoryColumnProps) {
         </div>
       </div>
 
-      <div className="flex-1 px-3 py-2 flex flex-col gap-2 overflow-y-auto">
-        {tickets.map((ticket) => (
-          <TicketCard key={ticket.id} ticket={ticket} />
+      <div
+        className="flex-1 px-3 py-2 flex flex-col overflow-y-auto"
+        style={{ gap: 0 }}
+        onDragOver={(e) => {
+          if (dragState.dragType === 'ticket') {
+            onTicketDragOver(e, category.id, tickets);
+          }
+        }}
+        onDrop={(e) => {
+          if (dragState.dragType === 'ticket') {
+            onTicketDrop(e, category.id, tickets);
+          }
+        }}
+      >
+        {isTicketDropTarget && dragState.dropPosition === 0 && (
+          <DropIndicator color={category.color} />
+        )}
+        {tickets.map((ticket, index) => (
+          <div key={ticket.id} className="flex flex-col" style={{ gap: 0 }}>
+            <div className="mb-2">
+              <TicketCard
+                ticket={ticket}
+                onDragStart={onTicketDragStart}
+                onDragEnd={onTicketDragEnd}
+                isDragging={dragState.draggedTicketId === ticket.id}
+              />
+            </div>
+            {isTicketDropTarget && dragState.dropPosition === index + 1 && (
+              <DropIndicator color={category.color} />
+            )}
+          </div>
         ))}
+        {tickets.length === 0 && isTicketDropTarget && (
+          <div
+            className="flex-1 rounded-lg border-2 border-dashed transition-colors"
+            style={{ minHeight: 60, borderColor: category.color, opacity: 0.6 }}
+          />
+        )}
       </div>
 
       <div className="px-3 pb-3 pt-1">
