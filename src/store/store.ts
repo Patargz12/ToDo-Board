@@ -4,6 +4,7 @@ import authReducer from './slices/authSlice';
 import boardReducer from './slices/boardSlice';
 import ticketsReducer from './slices/ticketsSlice';
 import historyReducer from './slices/historySlice';
+import draftsReducer from './slices/draftsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     board: boardReducer,
     tickets: ticketsReducer,
     history: historyReducer,
+    drafts: draftsReducer,
   },
 });
 

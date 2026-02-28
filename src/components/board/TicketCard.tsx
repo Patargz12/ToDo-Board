@@ -1,6 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { Ticket } from '@/src/types';
+import { TicketDetailModal } from './TicketDetailModal';
+import { useAppSelector } from '@/src/store/store';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -37,14 +40,35 @@ function getExpiryInfo(expiryDate: string): { label: string; colorClass: string;
 
 export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging }: TicketCardProps) {
   const expiry = ticket.expiryDate ? getExpiryInfo(ticket.expiryDate) : null;
+  const [showModal, setShowModal] = useState(false);
+  const [dragStarted, setDragStarted] = useState(false);
+  const hasDraft = useAppSelector((state) =>
+    state.drafts.draftedTicketIds.includes(ticket.id)
+  );
+
+  function handleClick() {
+    if (dragStarted) return;
+    if (onClick) {
+      onClick();
+    } else {
+      setShowModal(true);
+    }
+  }
 
   return (
+    <>
     <div
       data-ticket-id={ticket.id}
       draggable={true}
-      onClick={onClick}
-      onDragStart={(e) => onDragStart?.(e, ticket.id, ticket.categoryId)}
-      onDragEnd={() => onDragEnd?.()}
+      onClick={handleClick}
+      onDragStart={(e) => {
+        setDragStarted(true);
+        onDragStart?.(e, ticket.id, ticket.categoryId);
+      }}
+      onDragEnd={() => {
+        setTimeout(() => setDragStarted(false), 0);
+        onDragEnd?.();
+      }}
       className="bg-white rounded-lg px-3 py-2.5 shadow-sm border border-gray-100 cursor-grab active:cursor-grabbing hover:-translate-y-0.5 hover:shadow-md transition-all duration-150 group select-none"
       style={{
         borderLeftWidth: 3,
@@ -57,6 +81,11 @@ export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging
         <p className="text-sm text-gray-800 font-medium leading-snug line-clamp-2 flex-1">
           {ticket.title}
         </p>
+        {hasDraft && (
+          <span className="shrink-0 text-xs font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-600 border border-amber-200">
+            Draft
+          </span>
+        )}
       </div>
 
       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -69,11 +98,16 @@ export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging
 
         {expiry && (
           <div className="flex items-center gap-1">
-            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${expiry.dotColor}`} />
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${expiry.dotColor}`} />
             <span className={`text-xs font-medium ${expiry.colorClass}`}>{expiry.label}</span>
           </div>
         )}
       </div>
     </div>
+
+    {showModal && (
+      <TicketDetailModal ticket={ticket} onClose={() => setShowModal(false)} />
+    )}
+    </>
   );
 }

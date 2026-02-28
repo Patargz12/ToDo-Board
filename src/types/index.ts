@@ -36,6 +36,11 @@ export interface Draft {
   ticketId: string | null;
   title: string;
   description: string;
+  expiryDate: string;
+  priorityLabel: string;
+  priorityColor: string;
+  priorityOrder: number;
+  categoryId: string;
   userId: string;
   updatedAt: string;
 }

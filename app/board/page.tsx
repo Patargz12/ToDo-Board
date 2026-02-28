@@ -8,11 +8,13 @@ import { AddCategoryForm } from '@/src/components/board/AddCategoryForm';
 import { useAppDispatch, useAppSelector } from '@/src/store/store';
 import { fetchCategories } from '@/src/store/slices/boardSlice';
 import { fetchTickets } from '@/src/store/slices/ticketsSlice';
+import { fetchDraftedTicketIds } from '@/src/store/slices/draftsSlice';
 import { useDragAndDrop } from '@/src/hooks/useDragAndDrop';
 
 function BoardContent() {
   const dispatch = useAppDispatch();
   const { categories, loading } = useAppSelector((state) => state.board);
+  const user = useAppSelector((state) => state.auth.user);
   const [showAddForm, setShowAddForm] = useState(false);
 
   const {
@@ -32,7 +34,8 @@ function BoardContent() {
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchTickets());
-  }, [dispatch]);
+    if (user?.id) dispatch(fetchDraftedTicketIds(user.id));
+  }, [dispatch, user?.id]);
 
   return (
     <div className="flex flex-col h-screen bg-blue-50">

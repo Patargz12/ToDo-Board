@@ -104,10 +104,43 @@ export const updateTicket = createAsyncThunk(
 
       const ticket = await apiUpdateTicket(id, fields);
 
+      const fieldLabels: Record<string, string> = {
+        title: 'Title',
+        description: 'Description',
+        expiryDate: 'Expiry date',
+        priorityLabel: 'Priority',
+        priorityColor: 'Priority color',
+        priorityOrder: 'Priority order',
+      };
+
+      const changedParts: string[] = [];
+      if (before) {
+        for (const key of Object.keys(fields) as (keyof typeof fields)[]) {
+          const label = fieldLabels[key] ?? key;
+          const oldVal = before[key as keyof Ticket];
+          const newVal = ticket[key as keyof Ticket];
+          if (oldVal !== newVal) {
+            if (key === 'title') {
+              changedParts.push(`Title changed to "${newVal}"`);
+            } else if (key === 'description') {
+              changedParts.push(newVal ? 'Description updated' : 'Description cleared');
+            } else if (key === 'expiryDate') {
+              changedParts.push(newVal ? `Expiry set to ${new Date(newVal as string).toLocaleString()}` : 'Expiry date removed');
+            } else if (key === 'priorityLabel') {
+              changedParts.push(`Priority changed to "${newVal || 'None'}"`);
+            } else {
+              changedParts.push(`${label} updated`);
+            }
+          }
+        }
+      }
+
+      const message = changedParts.length > 0 ? changedParts.join('; ') : 'Ticket updated';
+
       await createHistoryEntry(
         'card',
         'ticket_updated',
-        { before, after: ticket },
+        { message },
         id,
         userId
       );
@@ -234,7 +267,11 @@ export const reorderTickets = createAsyncThunk(
 const ticketsSlice = createSlice({
   name: 'tickets',
   initialState,
-  reducers: {},
+  reducers: {
+    removeTicketFromState(state, action: { payload: string }) {
+      state.tickets = state.tickets.filter((t) => t.id !== action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTickets.pending, (state) => {
@@ -295,4 +332,5 @@ const ticketsSlice = createSlice({
   },
 });
 
+export const { removeTicketFromState } = ticketsSlice.actions;
 export default ticketsSlice.reducer;
