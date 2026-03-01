@@ -21,41 +21,23 @@ export const signUp = createAsyncThunk(
   'auth/signUp',
   async ({ email, password, username }: { email: string; password: string; username: string }, { rejectWithValue }) => {
     try {
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username,
-          },
-        },
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, username }),
       });
 
-      if (signUpError) throw signUpError;
-      if (!authData.user || !authData.session) throw new Error('Signup failed');
+      const data = await res.json();
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authData.user.id)
-        .single();
+      if (!res.ok) {
+        return rejectWithValue(data.error || 'Registration failed.');
+      }
 
-      if (profileError) throw profileError;
+      storeAuth(data.token, data.user);
 
-      const user: User = {
-        id: profile.id,
-        email: profile.email,
-        username: profile.username,
-        avatarUrl: profile.avatar_url,
-        notificationDaysBefore: profile.notification_days_before,
-        createdAt: profile.created_at,
-      };
-
-      storeAuth(authData.session.access_token, user);
-
-      return { user, token: authData.session.access_token };
+      return { user: data.user, token: data.token };
     } catch (error: unknown) {
-      return rejectWithValue((error as Error).message || 'Signup failed');
+      return rejectWithValue((error as Error).message || 'Registration failed.');
     }
   }
 );
