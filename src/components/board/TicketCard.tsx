@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Ticket } from '@/src/types';
 import { TicketDetailModal } from './TicketDetailModal';
 import { useAppSelector } from '@/src/store/store';
+import { getExpiryStatus } from '@/src/lib/notifications';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -13,33 +14,9 @@ interface TicketCardProps {
   isDragging?: boolean;
 }
 
-function getExpiryInfo(expiryDate: string): { label: string; colorClass: string; dotColor: string } {
-  if (!expiryDate) return { label: '', colorClass: '', dotColor: '' };
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const expiry = new Date(expiryDate);
-  expiry.setHours(0, 0, 0, 0);
-  const diffMs = expiry.getTime() - today.getTime();
-  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 0) {
-    return { label: 'Overdue', colorClass: 'text-red-600', dotColor: 'bg-red-500' };
-  }
-  if (diffDays === 0) {
-    return { label: 'Due today', colorClass: 'text-red-500', dotColor: 'bg-red-400' };
-  }
-  if (diffDays === 1) {
-    return { label: '1 day left', colorClass: 'text-yellow-600', dotColor: 'bg-yellow-400' };
-  }
-  if (diffDays <= 3) {
-    return { label: `${diffDays} days left`, colorClass: 'text-yellow-600', dotColor: 'bg-yellow-400' };
-  }
-  return { label: `${diffDays} days left`, colorClass: 'text-green-600', dotColor: 'bg-green-500' };
-}
-
 export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging }: TicketCardProps) {
-  const expiry = ticket.expiryDate ? getExpiryInfo(ticket.expiryDate) : null;
+  const daysBefore = useAppSelector((state) => state.notifications.notificationSettings.daysBefore);
+  const expiry = ticket.expiryDate ? getExpiryStatus(ticket.expiryDate, daysBefore) : null;
   const [showModal, setShowModal] = useState(false);
   const [dragStarted, setDragStarted] = useState(false);
   const hasDraft = useAppSelector((state) =>
@@ -69,7 +46,13 @@ export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging
         setTimeout(() => setDragStarted(false), 0);
         onDragEnd?.();
       }}
-      className="bg-white rounded-lg px-3 py-2.5 shadow-sm border border-gray-100 cursor-grab active:cursor-grabbing hover:-translate-y-0.5 hover:shadow-md transition-all duration-150 group select-none"
+      className={`rounded-lg px-3 py-2.5 shadow-sm border cursor-grab active:cursor-grabbing hover:-translate-y-0.5 hover:shadow-md transition-all duration-150 group select-none ${
+        expiry?.status === 'overdue'
+          ? 'bg-red-50 border-red-200'
+          : expiry?.status === 'danger'
+          ? 'bg-white border-red-300'
+          : 'bg-white border-gray-100'
+      }`}
       style={{
         borderLeftWidth: 3,
         borderLeftColor: ticket.priorityColor,
@@ -96,10 +79,27 @@ export function TicketCard({ ticket, onClick, onDragStart, onDragEnd, isDragging
           {ticket.priorityLabel}
         </span>
 
-        {expiry && (
+        {expiry && expiry.status !== 'safe' && (
           <div className="flex items-center gap-1">
-            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${expiry.dotColor}`} />
-            <span className={`text-xs font-medium ${expiry.colorClass}`}>{expiry.label}</span>
+            {expiry.status === 'overdue' && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 border border-red-300 tracking-wide">
+                OVERDUE
+              </span>
+            )}
+            {expiry.status === 'danger' && (
+              <div className="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span className="text-xs font-medium text-red-600">{expiry.label}</span>
+              </div>
+            )}
+            {expiry.status === 'warning' && (
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-amber-400 animate-pulse" />
+                <span className="text-xs font-medium text-amber-600">{expiry.label}</span>
+              </div>
+            )}
           </div>
         )}
       </div>

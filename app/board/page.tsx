@@ -10,6 +10,9 @@ import { fetchCategories } from '@/src/store/slices/boardSlice';
 import { fetchTickets } from '@/src/store/slices/ticketsSlice';
 import { fetchDraftedTicketIds } from '@/src/store/slices/draftsSlice';
 import { useDragAndDrop } from '@/src/hooks/useDragAndDrop';
+import { useExpiryChecker } from '@/src/hooks/useExpiryChecker';
+import { ToastContainer } from '@/src/components/notifications/ToastContainer';
+import { setDaysBefore } from '@/src/store/slices/notificationSlice';
 
 function BoardContent() {
   const dispatch = useAppDispatch();
@@ -31,15 +34,19 @@ function BoardContent() {
     handleColumnDrop,
   } = useDragAndDrop(categories);
 
+  useExpiryChecker();
+
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchTickets());
     if (user?.id) dispatch(fetchDraftedTicketIds(user.id));
-  }, [dispatch, user?.id]);
+    if (user?.notificationDaysBefore) dispatch(setDaysBefore(user.notificationDaysBefore));
+  }, [dispatch, user?.id, user?.notificationDaysBefore]);
 
   return (
     <div className="flex flex-col h-screen bg-blue-50">
       <Navbar />
+      <ToastContainer />
       <div className="flex-1 overflow-x-auto px-6 py-5">
         {loading && categories.length === 0 ? (
           <div className="flex items-center justify-center h-full">
