@@ -2,10 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { HistoryEntry } from '@/src/types';
 import { supabase } from '@/src/lib/supabase';
 
+const PAGE_SIZE = 20;
+
 interface HistoryState {
   boardHistory: HistoryEntry[];
   cardHistory: Record<string, HistoryEntry[]>;
   loading: boolean;
+  hasMore: boolean;
   error: string | null;
 }
 
@@ -17,6 +20,7 @@ const initialState: HistoryState = {
   boardHistory: [],
   cardHistory: {},
   loading: false,
+  hasMore: true,
   error: null,
 };
 
@@ -45,10 +49,35 @@ export const fetchBoardHistory = createAsyncThunk(
         .select('*')
         .eq('user_id', userId)
         .eq('type', 'board')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .range(0, PAGE_SIZE - 1);
 
       if (error) throw error;
-      return data.map(mapRow);
+      return { entries: data.map(mapRow), hasMore: data.length === PAGE_SIZE };
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
+    }
+  }
+);
+
+export const loadMoreBoardHistory = createAsyncThunk(
+  'history/loadMoreBoardHistory',
+  async (offset: number, { getState, rejectWithValue }) => {
+    try {
+      const state = getState() as StateShape;
+      const userId = state.auth.user?.id;
+      if (!userId) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase
+        .from('history')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('type', 'board')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + PAGE_SIZE - 1);
+
+      if (error) throw error;
+      return { entries: data.map(mapRow), hasMore: data.length === PAGE_SIZE };
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message);
     }
@@ -91,9 +120,22 @@ const historySlice = createSlice({
       })
       .addCase(fetchBoardHistory.fulfilled, (state, action) => {
         state.loading = false;
-        state.boardHistory = action.payload;
+        state.boardHistory = action.payload.entries;
+        state.hasMore = action.payload.hasMore;
       })
       .addCase(fetchBoardHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(loadMoreBoardHistory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loadMoreBoardHistory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.boardHistory.push(...action.payload.entries);
+        state.hasMore = action.payload.hasMore;
+      })
+      .addCase(loadMoreBoardHistory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Ticket } from '@/src/types';
 import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { updateTicket, deleteTicket, moveTicket, removeTicketFromState } from '@/src/store/slices/ticketsSlice';
+import { updateTicket, deleteTicket, moveTicket } from '@/src/store/slices/ticketsSlice';
 import { fetchCardHistory } from '@/src/store/slices/historySlice';
 import { useDraftSave } from '@/src/hooks/useDraftSave';
 import { PrioritySelector } from './PrioritySelector';
@@ -134,10 +134,9 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
   }
 
   async function handleDelete() {
-    dispatch(removeTicketFromState(ticket.id));
     onClose();
     await clearDraft().catch(() => {});
-    dispatch(deleteTicket(ticket.id));
+    dispatch(deleteTicket(ticket));
   }
 
   function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -146,10 +145,10 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/40 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[60vh] flex flex-col overflow-hidden">
+      <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-2xl h-[80vh] sm:h-[60vh] flex flex-col overflow-hidden">
         <div className="flex items-start justify-between px-6 pt-5 pb-3 border-b border-gray-100">
           <div className="flex-1 pr-4">
             {editingTitle ? (

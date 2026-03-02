@@ -154,35 +154,32 @@ export const updateTicket = createAsyncThunk(
 
 export const deleteTicket = createAsyncThunk(
   'tickets/deleteTicket',
-  async (id: string, { getState, rejectWithValue }) => {
+  async (ticket: Ticket, { getState, rejectWithValue }) => {
     try {
       const state = getState() as StateShape;
       const userId = state.auth.user?.id;
       if (!userId) throw new Error('Not authenticated');
 
-      const ticket = state.tickets.tickets.find((t) => t.id === id);
-      if (!ticket) throw new Error('Ticket not found');
-
-      await apiDeleteTicket(id);
+      await apiDeleteTicket(ticket.id);
 
       const remaining = state.tickets.tickets
-        .filter((t) => t.categoryId === ticket.categoryId && t.id !== id)
+        .filter((t) => t.categoryId === ticket.categoryId)
         .sort((a, b) => a.position - b.position)
         .map((t, i) => ({ ...t, position: i }));
 
       if (remaining.length > 0) {
-        await batchUpdateTicketPositions(remaining.map(({ id: tid, position }) => ({ id: tid, position })));
+        await batchUpdateTicketPositions(remaining.map(({ id, position }) => ({ id, position })));
       }
 
       await createHistoryEntry(
         'card',
         'ticket_deleted',
-        { ticketId: id, title: ticket.title },
-        id,
+        { ticketId: ticket.id, title: ticket.title },
+        ticket.id,
         userId
       );
 
-      return { id, categoryId: ticket.categoryId, remaining };
+      return { id: ticket.id, categoryId: ticket.categoryId, remaining };
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message);
     }
@@ -245,6 +242,19 @@ export const moveTicket = createAsyncThunk(
         userId
       );
 
+      await createHistoryEntry(
+        'board',
+        'ticket_moved',
+        {
+          ticketId,
+          title: ticket.title,
+          from: sourceCategory?.name ?? sourceCategoryId,
+          to: targetCategory?.name ?? targetCategoryId,
+        },
+        ticketId,
+        userId
+      );
+
       return { ticketId, sourceCategoryId, targetCategoryId, targetPosition, sourceRemaining, targetReindexed };
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message);
@@ -293,14 +303,15 @@ const ticketsSlice = createSlice({
         const index = state.tickets.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) state.tickets[index] = action.payload;
       })
+      .addCase(deleteTicket.pending, (state, action) => {
+        state.tickets = state.tickets.filter((t) => t.id !== action.meta.arg.id);
+      })
       .addCase(deleteTicket.fulfilled, (state, action) => {
-        state.tickets = state.tickets
-          .filter((t) => t.id !== action.payload.id)
-          .map((t) => {
-            if (t.categoryId !== action.payload.categoryId) return t;
-            const updated = action.payload.remaining.find((r) => r.id === t.id);
-            return updated ?? t;
-          });
+        state.tickets = state.tickets.map((t) => {
+          if (t.categoryId !== action.payload.categoryId) return t;
+          const updated = action.payload.remaining.find((r) => r.id === t.id);
+          return updated ?? t;
+        });
       })
       .addCase(moveTicket.fulfilled, (state, action) => {
         const { ticketId, targetCategoryId, targetReindexed, sourceRemaining } = action.payload;
