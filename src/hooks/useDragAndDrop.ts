@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useAppDispatch } from '@/src/store/store';
-import { moveTicket } from '@/src/store/slices/ticketsSlice';
-import { reorderCategories } from '@/src/store/slices/boardSlice';
-import { Category } from '@/src/types';
+import { useAppDispatch } from '@/store/store';
+import { moveTicket } from '@/store/slices/ticketsSlice';
+import { reorderCategories } from '@/store/slices/boardSlice';
+import { Category } from '@/types';
 
 export interface DragState {
   draggedTicketId: string | null;

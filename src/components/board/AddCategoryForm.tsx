@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppDispatch } from '@/src/store/store';
-import { addCategory } from '@/src/store/slices/boardSlice';
+import { useAppDispatch } from '@/store/store';
+import { addCategory } from '@/store/slices/boardSlice';
 
 const PRESET_COLORS = [
   '#ef4444',

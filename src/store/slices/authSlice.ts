@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { supabase } from '@/src/lib/supabase';
-import { User } from '@/src/types';
-import { storeAuth, clearStoredAuth, getStoredUser, getStoredToken } from '@/src/lib/auth';
+import { supabase } from '@/lib/supabase';
+import { User } from '@/types';
+import { storeAuth, clearStoredAuth, getStoredUser, getStoredToken } from '@/lib/auth';
 
 interface AuthState {
   user: User | null;

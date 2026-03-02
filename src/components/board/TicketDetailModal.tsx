@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Ticket } from '@/src/types';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { updateTicket, deleteTicket, moveTicket } from '@/src/store/slices/ticketsSlice';
-import { fetchCardHistory } from '@/src/store/slices/historySlice';
-import { useDraftSave } from '@/src/hooks/useDraftSave';
+import { Ticket } from '@/types';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { updateTicket, deleteTicket, moveTicket } from '@/store/slices/ticketsSlice';
+import { fetchCardHistory } from '@/store/slices/historySlice';
+import { useDraftSave } from '@/hooks/useDraftSave';
 import { PrioritySelector } from './PrioritySelector';
 
 function timeAgo(dateStr: string): string {

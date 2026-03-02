@@ -1,5 +1,5 @@
-import { store } from '@/src/store/store';
-import { addToast } from '@/src/store/slices/notificationSlice';
+import { store } from '@/store/store';
+import { addToast } from '@/store/slices/notificationSlice';
 
 function dispatch(message: string, type: 'info' | 'warning' | 'error' | 'success') {
   store.dispatch(addToast({ message, type }));

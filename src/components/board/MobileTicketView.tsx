@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Category } from '@/src/types';
-import { useAppSelector } from '@/src/store/store';
+import { Category } from '@/types';
+import { useAppSelector } from '@/store/store';
 import { TicketCard } from './TicketCard';
 import { CreateTicketModal } from './CreateTicketModal';
 

@@ -1,4 +1,4 @@
-import { User } from '@/src/types';
+import { User } from '@/types';
 
 export const getStoredUser = (): User | null => {
   if (typeof window === 'undefined') return null;

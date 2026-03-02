@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { updateNotificationSettings, setPushEnabled, setDaysBefore } from '@/src/store/slices/notificationSlice';
-import { requestPushPermission } from '@/src/lib/notifications';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { updateNotificationSettings, setPushEnabled, setDaysBefore } from '@/store/slices/notificationSlice';
+import { requestPushPermission } from '@/lib/notifications';
 
 interface NotificationSettingsProps {
   onClose: () => void;

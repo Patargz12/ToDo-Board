@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getTicketIdsWithDrafts } from '@/src/lib/api/drafts';
+import { getTicketIdsWithDrafts } from '@/lib/api/drafts';
 
 interface DraftsState {
   draftedTicketIds: string[];

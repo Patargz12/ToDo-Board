@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAppDispatch } from '@/src/store/store';
-import { loadSession } from '@/src/store/slices/authSlice';
+import { useAppDispatch } from '@/store/store';
+import { loadSession } from '@/store/slices/authSlice';
 
 export function AuthInitializer() {
   const dispatch = useAppDispatch();

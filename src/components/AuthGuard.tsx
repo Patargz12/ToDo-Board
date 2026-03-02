@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppSelector } from '@/src/store/store';
+import { useAppSelector } from '@/store/store';
 import { Spinner } from './ui/Spinner';
 
 interface AuthGuardProps {

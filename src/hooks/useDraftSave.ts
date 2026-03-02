@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { getDraft, saveDraft, deleteDraft } from '@/src/lib/api/drafts';
-import { markDrafted, unmarkDrafted } from '@/src/store/slices/draftsSlice';
-import { Draft } from '@/src/types';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { getDraft, saveDraft, deleteDraft } from '@/lib/api/drafts';
+import { markDrafted, unmarkDrafted } from '@/store/slices/draftsSlice';
+import { Draft } from '@/types';
 
 interface DraftPayload {
   title: string;

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { HistoryEntry } from '@/src/types';
-import { supabase } from '@/src/lib/supabase';
+import { HistoryEntry } from '@/types';
+import { supabase } from '@/lib/supabase';
 
 const PAGE_SIZE = 20;
 

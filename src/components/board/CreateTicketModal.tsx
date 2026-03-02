@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAppDispatch } from '@/src/store/store';
-import { addTicket } from '@/src/store/slices/ticketsSlice';
+import { useAppDispatch } from '@/store/store';
+import { addTicket } from '@/store/slices/ticketsSlice';
 import { PrioritySelector } from './PrioritySelector';
 
 interface CreateTicketModalProps {

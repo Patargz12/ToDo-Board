@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Category } from '@/src/types';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { updateCategory, deleteCategory } from '@/src/store/slices/boardSlice';
+import { Category } from '@/types';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { updateCategory, deleteCategory } from '@/store/slices/boardSlice';
 import { TicketCard } from './TicketCard';
 import { DropIndicator } from './DropIndicator';
 import { CreateTicketModal } from './CreateTicketModal';
-import { DragState } from '@/src/hooks/useDragAndDrop';
+import { DragState } from '@/hooks/useDragAndDrop';
 
 interface CategoryColumnProps {
   category: Category;

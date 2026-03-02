@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { signIn, signUp } from '@/src/store/slices/authSlice';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { signIn, signUp } from '@/store/slices/authSlice';
 
 const SIGNIN_KEY = 'draft_signin';
 const SIGNUP_KEY = 'draft_signup';

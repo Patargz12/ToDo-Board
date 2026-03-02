@@ -1,5 +1,5 @@
-import { supabase } from '@/src/lib/supabase';
-import { Draft } from '@/src/types';
+import { supabase } from '@/lib/supabase';
+import { Draft } from '@/types';
 
 function mapRow(row: Record<string, unknown>): Draft {
   const rawDescription = (row.description as string) ?? '';

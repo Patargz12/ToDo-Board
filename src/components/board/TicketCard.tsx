@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Ticket } from '@/src/types';
+import { Ticket } from '@/types';
 import { TicketDetailModal } from './TicketDetailModal';
-import { useAppSelector } from '@/src/store/store';
-import { getExpiryStatus } from '@/src/lib/notifications';
+import { useAppSelector } from '@/store/store';
+import { getExpiryStatus } from '@/lib/notifications';
 
 interface TicketCardProps {
   ticket: Ticket;

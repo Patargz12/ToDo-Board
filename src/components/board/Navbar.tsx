@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { signOut } from '@/src/store/slices/authSlice';
-import { NotificationSettings } from '@/src/components/notifications/NotificationSettings';
-import { getExpiryStatus } from '@/src/lib/notifications';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { signOut } from '@/store/slices/authSlice';
+import { NotificationSettings } from '@/components/notifications/NotificationSettings';
+import { getExpiryStatus } from '@/lib/notifications';
 
 interface NavbarProps {
   onOpenHistory?: () => void;

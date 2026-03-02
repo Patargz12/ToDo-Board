@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { addToast } from '@/src/store/slices/notificationSlice';
-import { getExpiryStatus, sendPushNotification } from '@/src/lib/notifications';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { addToast } from '@/store/slices/notificationSlice';
+import { getExpiryStatus, sendPushNotification } from '@/lib/notifications';
 
 export function useExpiryChecker() {
   const dispatch = useAppDispatch();

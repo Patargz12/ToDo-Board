@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Category } from '@/src/types';
+import { Category } from '@/types';
 import {
   getCategories,
   createCategory,
   updateCategory as apiUpdateCategory,
   deleteCategory as apiDeleteCategory,
   batchUpdateCategoryPositions,
-} from '@/src/lib/api/categories';
-import { createHistoryEntry } from '@/src/lib/api/history';
+} from '@/lib/api/categories';
+import { createHistoryEntry } from '@/lib/api/history';
 
 interface BoardState {
   categories: Category[];

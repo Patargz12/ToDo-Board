@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { fetchBoardHistory, loadMoreBoardHistory } from '@/src/store/slices/historySlice';
-import { HistoryEntry } from '@/src/types';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { fetchBoardHistory, loadMoreBoardHistory } from '@/store/slices/historySlice';
+import { HistoryEntry } from '@/types';
 
 interface BoardHistoryPanelProps {
   onClose: () => void;

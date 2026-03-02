@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Ticket, Category } from '@/src/types';
+import { Ticket, Category } from '@/types';
 import {
   getTickets,
   createTicket,
   updateTicket as apiUpdateTicket,
   deleteTicket as apiDeleteTicket,
   batchUpdateTicketPositions,
-} from '@/src/lib/api/tickets';
-import { createHistoryEntry } from '@/src/lib/api/history';
+} from '@/lib/api/tickets';
+import { createHistoryEntry } from '@/lib/api/history';
 
 interface TicketsState {
   tickets: Ticket[];

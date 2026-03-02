@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { removeToast, Toast } from '@/src/store/slices/notificationSlice';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { removeToast, Toast } from '@/store/slices/notificationSlice';
 
 const typeStyles: Record<Toast['type'], string> = {
   info: 'bg-blue-50 border-blue-300 text-blue-800',

@@ -1,5 +1,5 @@
-import { supabase } from '@/src/lib/supabase';
-import { Category } from '@/src/types';
+import { supabase } from '@/lib/supabase';
+import { Category } from '@/types';
 
 export async function getCategories(userId: string): Promise<Category[]> {
   const { data, error } = await supabase

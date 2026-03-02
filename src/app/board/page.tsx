@@ -1,21 +1,21 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { AuthGuard } from '@/src/components/AuthGuard';
-import { Navbar } from '@/src/components/board/Navbar';
-import { CategoryColumn } from '@/src/components/board/CategoryColumn';
-import { AddCategoryForm } from '@/src/components/board/AddCategoryForm';
-import { MobileTicketView } from '@/src/components/board/MobileTicketView';
-import { BoardHistoryPanel } from '@/src/components/board/BoardHistoryPanel';
-import { CreateTicketModal } from '@/src/components/board/CreateTicketModal';
-import { useAppDispatch, useAppSelector } from '@/src/store/store';
-import { fetchCategories } from '@/src/store/slices/boardSlice';
-import { fetchTickets } from '@/src/store/slices/ticketsSlice';
-import { fetchDraftedTicketIds } from '@/src/store/slices/draftsSlice';
-import { useDragAndDrop } from '@/src/hooks/useDragAndDrop';
-import { useExpiryChecker } from '@/src/hooks/useExpiryChecker';
-import { ToastContainer } from '@/src/components/notifications/ToastContainer';
-import { setDaysBefore } from '@/src/store/slices/notificationSlice';
+import { AuthGuard } from '@/components/AuthGuard';
+import { Navbar } from '@/components/board/Navbar';
+import { CategoryColumn } from '@/components/board/CategoryColumn';
+import { AddCategoryForm } from '@/components/board/AddCategoryForm';
+import { MobileTicketView } from '@/components/board/MobileTicketView';
+import { BoardHistoryPanel } from '@/components/board/BoardHistoryPanel';
+import { CreateTicketModal } from '@/components/board/CreateTicketModal';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { fetchCategories } from '@/store/slices/boardSlice';
+import { fetchTickets } from '@/store/slices/ticketsSlice';
+import { fetchDraftedTicketIds } from '@/store/slices/draftsSlice';
+import { useDragAndDrop } from '@/hooks/useDragAndDrop';
+import { useExpiryChecker } from '@/hooks/useExpiryChecker';
+import { ToastContainer } from '@/components/notifications/ToastContainer';
+import { setDaysBefore } from '@/store/slices/notificationSlice';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);

@@ -1,5 +1,5 @@
-import { supabase } from '@/src/lib/supabase';
-import { Ticket } from '@/src/types';
+import { supabase } from '@/lib/supabase';
+import { Ticket } from '@/types';
 
 function mapRow(row: Record<string, unknown>): Ticket {
   return {
