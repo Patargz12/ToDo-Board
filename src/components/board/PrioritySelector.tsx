@@ -60,8 +60,8 @@ export function PrioritySelector({ value, onChange }: PrioritySelectorProps) {
           onClick={() => setIsCustom(true)}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
             isCustom
-              ? 'bg-gray-700 border-gray-700 text-white'
-              : 'bg-gray-100 border-gray-300 text-gray-600 hover:border-gray-400'
+              ? 'bg-white/15 border-white/30 text-white'
+              : 'bg-white/6 border-white/15 text-slate-400 hover:text-slate-200'
           }`}
         >
           Custom
@@ -74,21 +74,21 @@ export function PrioritySelector({ value, onChange }: PrioritySelectorProps) {
             value={customLabel}
             onChange={(e) => setCustomLabel(e.target.value)}
             placeholder="Label name"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="flex-1 rounded-lg px-3 py-1.5 text-sm text-slate-200 placeholder:text-slate-500 bg-white/8 border border-white/12 focus:outline-none focus:ring-1 focus:ring-indigo-500/40"
           />
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-gray-500">Color</span>
+            <span className="text-xs text-slate-500">Color</span>
             <input
               type="color"
               value={customColor}
               onChange={(e) => setCustomColor(e.target.value)}
-              className="w-8 h-8 rounded cursor-pointer border border-gray-200 p-0.5"
+              className="w-8 h-8 rounded cursor-pointer p-0.5 bg-transparent border border-white/15 scheme-dark"
             />
           </div>
           <button
             type="button"
             onClick={applyCustom}
-            className="px-3 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 transition-colors"
           >
             Apply
           </button>
@@ -102,7 +102,7 @@ export function PrioritySelector({ value, onChange }: PrioritySelectorProps) {
         >
           {value.label || 'None'}
         </span>
-        <span className="text-xs text-gray-400">preview</span>
+        <span className="text-xs text-slate-500">preview</span>
       </div>
     </div>
   );
