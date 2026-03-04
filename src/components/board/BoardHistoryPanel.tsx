@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { fetchBoardHistory, loadMoreBoardHistory } from '@/store/slices/historySlice';
 import { HistoryEntry } from '@/types';
@@ -61,6 +61,12 @@ export function BoardHistoryPanel({ onClose }: BoardHistoryPanelProps) {
   const { boardHistory, loading, hasMore } = useAppSelector((state) => state.history);
   const scrollRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const [closing, setClosing] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => onClose(), 250);
+  }, [onClose]);
 
   useEffect(() => {
     dispatch(fetchBoardHistory());
@@ -68,11 +74,11 @@ export function BoardHistoryPanel({ onClose }: BoardHistoryPanelProps) {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  }, [handleClose]);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -88,12 +94,12 @@ export function BoardHistoryPanel({ onClose }: BoardHistoryPanelProps) {
   return (
     <div className="fixed inset-0 z-40 flex justify-end">
       <div
-        className="flex-1 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
+        className="flex-1"
+        onClick={handleClose}
       />
       <div
         ref={panelRef}
-        className="w-full max-w-sm bg-slate-900 border-l border-white/[0.07] h-full flex flex-col shadow-[−8px_0_32px_rgba(0,0,0,0.4)] animate-slide-in-right"
+        className={`w-full max-w-sm bg-slate-900 border-l border-white/[0.07] h-full flex flex-col shadow-[−8px_0_32px_rgba(0,0,0,0.4)] ${closing ? 'animate-slide-out-right' : 'animate-slide-in-right'}`}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.07] shrink-0">
           <div>
@@ -101,7 +107,7 @@ export function BoardHistoryPanel({ onClose }: BoardHistoryPanelProps) {
             <p className="text-xs text-slate-500 mt-0.5">All activity on this board</p>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-lg text-slate-500 hover:bg-white/8 hover:text-slate-200 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
