@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAppDispatch } from '@/store/store';
 import { addTicket } from '@/store/slices/ticketsSlice';
 import { PrioritySelector } from './PrioritySelector';
+import { Button } from '@/components/ui/Button';
 
 interface CreateTicketModalProps {
   categoryId: string;
@@ -146,24 +147,18 @@ export function CreateTicketModal({ categoryId, onClose }: CreateTicketModalProp
         <div className="h-px bg-white/[0.07]" />
 
         <div className="flex justify-end gap-2.5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium rounded-xl text-slate-400 bg-white/7 border border-white/10 hover:bg-white/12 transition-all"
-          >
+          <Button type="button" variant="secondary" onClick={onClose}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="primary"
             onClick={handleSubmit}
             disabled={submitting}
-            className="px-5 py-2 text-sm font-semibold rounded-xl text-white bg-linear-to-br from-indigo-500 to-violet-500 shadow-[0_4px_14px_rgba(99,102,241,0.4)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.55)] transition-all flex items-center gap-2 disabled:opacity-50"
+            loading={submitting}
           >
-            {submitting && (
-              <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            )}
             Create task
-          </button>
+          </Button>
         </div>
       </div>
     </div>
