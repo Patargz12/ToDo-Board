@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import { signOut } from '@/store/slices/authSlice';
 import { NotificationSettings } from '@/components/notifications/NotificationSettings';
 import { getExpiryStatus } from '@/lib/notifications';
+import { Button } from '@/components/ui/Button';
 
 interface NavbarProps {
   onOpenHistory?: () => void;
@@ -53,16 +54,16 @@ export function Navbar({ onOpenHistory }: NavbarProps) {
         </div>
 
         {onOpenHistory && (
-          <button
+          <Button
+            variant="primary"
             onClick={onOpenHistory}
-            className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-100 hover:bg-white/8 px-3 py-1.5 rounded-lg transition-all duration-150"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <polyline points="1 4 1 10 7 10" />
               <path d="M3.51 15a9 9 0 1 0 .49-4.56" />
             </svg>
             History
-          </button>
+          </Button>
         )}
 
         <div className="relative">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { signIn, signUp } from '@/store/slices/authSlice';
+import { Button } from '@/components/ui/Button';
 
 const SIGNIN_KEY = 'draft_signin';
 const SIGNUP_KEY = 'draft_signup';
@@ -128,9 +129,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900 px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 px-4">
       <div className="flex flex-col items-center mb-8 select-none">
-        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-[0_4px_24px_rgba(99,102,241,0.4)] mb-4">
+        <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center shadow-[0_4px_24px_rgba(99,102,241,0.3)] mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <rect x="3" y="3" width="7" height="7" rx="1" />
             <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -138,7 +139,7 @@ export default function LoginPage() {
             <rect x="14" y="14" width="7" height="7" rx="1" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold bg-linear-to-r from-slate-200 to-indigo-300 bg-clip-text text-transparent">TaskBoard</h1>
+        <h1 className="text-2xl font-bold text-slate-200">TaskBoard</h1>
         <p className="text-sm text-slate-500 mt-1">Organize your tasks with ease</p>
       </div>
 
@@ -272,16 +273,15 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
+              variant="primary"
               disabled={loading}
-              className="w-full py-2.5 mt-1 bg-linear-to-br from-indigo-500 to-violet-500 text-white text-sm font-semibold rounded-xl shadow-[0_4px_14px_rgba(99,102,241,0.4)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.55)] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              loading={loading}
+              className="w-full mt-1"
             >
-              {loading && (
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              )}
               {mode === 'signin' ? 'Login' : 'Register'}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

@@ -80,7 +80,7 @@ function BoardContent() {
   }, [handleKeyDown]);
 
   return (
-    <div className="flex flex-col h-screen bg-linear-to-br from-slate-900 via-indigo-950 to-slate-900">
+    <div className="flex flex-col h-screen bg-slate-900">
       <Navbar onOpenHistory={() => setShowHistory(true)} />
       <ToastContainer />
 
