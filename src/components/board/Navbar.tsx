@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { signOut } from '@/store/slices/authSlice';
 import { NotificationSettings } from '@/components/notifications/NotificationSettings';
@@ -30,16 +31,9 @@ export function Navbar({ onOpenHistory }: NavbarProps) {
   });
 
   return (
-    <nav className="h-14 bg-slate-900/90 backdrop-blur-md border-b border-white/[0.07] shadow-[0_1px_20px_rgba(0,0,0,0.4)] flex items-center justify-between px-4 sm:px-6 shrink-0 relative">
+    <nav className="h-18 bg-slate-900/90 backdrop-blur-md border-b border-white/[0.07] shadow-[0_1px_20px_rgba(0,0,0,0.4)] flex items-center justify-between px-4 sm:px-6 shrink-0 relative">
       <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
-          </svg>
-        </div>
+        <Image src="/todoboard_icon.png" alt="TaskBoard logo" width={28} height={28} className="rounded-lg" />
         <span className="text-base font-bold tracking-tight bg-linear-to-r from-slate-200 to-indigo-300 bg-clip-text text-transparent">
           TaskBoard
         </span>
@@ -84,15 +78,12 @@ export function Navbar({ onOpenHistory }: NavbarProps) {
           )}
         </div>
 
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-100 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/8 hover:border-white/20 transition-all duration-150 ml-1"
-        >
+        <Button variant="danger" onClick={handleSignOut} className="ml-1">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
           Sign out
-        </button>
+        </Button>
       </div>
 
       <div className="flex sm:hidden items-center gap-2">

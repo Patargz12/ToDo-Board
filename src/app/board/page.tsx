@@ -120,7 +120,7 @@ function BoardContent() {
         </div>
       ) : (
         <div className="flex-1 overflow-x-auto px-6 py-6">
-          <div className="flex gap-5 items-start transition-all duration-200 min-h-[calc(100vh-130px)]">
+          <div className="flex gap-5 items-start justify-center transition-all duration-200 min-h-[calc(100vh-130px)]">
             {categories.map((category) => (
               <CategoryColumn
                 key={category.id}
