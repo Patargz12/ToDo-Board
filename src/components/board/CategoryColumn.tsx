@@ -245,7 +245,7 @@ export function CategoryColumn({
       <div className="px-3 pb-3 pt-1 shrink-0">
         <button
           onClick={() => setShowCreateModal(true)}
-          className="w-full flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-indigo-400 px-3 py-2.5 rounded-xl border border-dashed border-white/10 hover:border-indigo-500/30 hover:bg-white/6 transition-all duration-150"
+          className="w-full flex bg-primary items-center justify-center gap-2 text-xs font-semibold text-primary-foreground   hover:shadow-[0_4px_18px_rgba(251,168,226,0.5)] py-2.5 rounded-xl border border-dashed border-white/10 hover:brightness-105 transition-all duration-150"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <line x1="12" y1="5" x2="12" y2="19" />

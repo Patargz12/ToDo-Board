@@ -24,7 +24,7 @@ export const Button = ({
     secondary:
       'bg-white/8 text-slate-300 border border-white/10 hover:bg-white/12 active:bg-white/16',
     danger:
-      'bg-red-500/15 text-red-300 border border-red-500/25 hover:bg-red-500/25 active:bg-red-500/35',
+      'bg-red-500 text-white hover:brightness-105 active:brightness-95 shadow-[0_2px_12px_rgba(239,68,68,0.25)] hover:shadow-[0_4px_18px_rgba(239,68,68,0.4)]',
   };
 
   return (
