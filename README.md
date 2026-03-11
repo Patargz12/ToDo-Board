@@ -19,6 +19,17 @@ Nothing groundbreaking here, just a well-built tool that does what it needs to d
 
 Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Redux Toolkit, Supabase (Auth + Postgres). Drag and drop is native HTML5 — no extra deps for that. Docker support included if you'd rather not run it bare.
 
+## Demo
+
+A live instance is running with pre-seeded data. You can log in with these credentials without any setup:
+
+```
+Email:    demo@taskboard.dev
+Password: demo1234
+```
+
+> This account is read/write — feel free to create, move, and delete tasks.
+
 ## Getting started
 
 You'll need Node 18+ and a free [Supabase](https://supabase.com) project.
@@ -73,36 +84,47 @@ The **History** button in the navbar opens a side panel with a log of everything
 
 ## Docker
 
-If you prefer containers:
+Runs as a multi-stage build — deps, build, and a lean Alpine production image. Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+**1. Clone and set up environment variables**
 
 ```bash
-docker-compose up --build
+git clone https://github.com/Patargz12/ToDo-Board.git
+cd todoboard
+cp .env.example .env.local
 ```
 
-Add `-d` to run it in the background. `docker-compose down` to stop.
+Open `.env.local` and fill in your Supabase credentials:
 
-## Project layout
-
-```
-src/
-├── app/                  # Pages (board, login, register API route)
-├── components/
-│   ├── board/            # Everything on the board — columns, cards, modals, history panel
-│   ├── notifications/    # Toast system and notification settings
-│   └── ui/               # Small shared components (Button, Input, ConfirmDialog)
-├── hooks/                # useDragAndDrop, useDraftSave, useExpiryChecker, useDebounce
-├── lib/
-│   ├── api/              # All Supabase queries (tickets, categories, history, drafts)
-│   └── ...               # Auth helpers, notification logic, utils
-├── store/                # Redux store, slices, and provider
-└── types/                # Shared TypeScript types
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 ```
 
-## Scripts
+You can find all three values at **Supabase Dashboard → Project Settings → API**.
+
+Before building, set up the database — go to your Supabase SQL editor and run the contents of `src/db/schema.sql`.
+
+**2. Build and start**
 
 ```bash
-npm run dev      # dev server
-npm run build    # production build
-npm run start    # serve the build
-npm run lint     # eslint
+docker compose --env-file .env.local up --build -d
+```
+
+**3. Open the app**
+
+Visit [http://localhost:3000](http://localhost:3000).
+
+**Other useful commands**
+
+```bash
+# View live logs
+docker compose logs -f
+
+# Stop the container
+docker compose down
+
+# Rebuild after code changes
+docker compose --env-file .env.local up --build -d
 ```
