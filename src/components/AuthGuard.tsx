@@ -19,7 +19,7 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
     }
   }, [user, loading, router]);
 
-  if (loading) {
+  if (loading && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Spinner className="w-8 h-8 text-blue-600" />

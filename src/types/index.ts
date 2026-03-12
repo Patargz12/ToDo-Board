@@ -49,7 +49,7 @@ export interface HistoryEntry {
   id: string;
   type: 'board' | 'card';
   action: string;
-  details: Record<string, unknown>;
+  details: string;
   ticketId: string | null;
   userId: string;
   createdAt: string;

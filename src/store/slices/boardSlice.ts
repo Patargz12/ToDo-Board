@@ -37,6 +37,12 @@ export const fetchCategories = createAsyncThunk(
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message);
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const state = getState() as StateShape;
+      return !state.board.loading;
+    },
   }
 );
 
@@ -52,7 +58,7 @@ export const addCategory = createAsyncThunk(
       await createHistoryEntry(
         'board',
         'category_created',
-        { categoryId: category.id, name, color },
+        `Created column "${name}"`,
         null,
         userId
       );
@@ -87,6 +93,7 @@ export const deleteCategory = createAsyncThunk(
       const state = getState() as StateShape;
       const userId = state.auth.user?.id;
       if (!userId) throw new Error('Not authenticated');
+      const deletedCategory = state.board.categories.find((c) => c.id === id);
       await apiDeleteCategory(id);
       const remaining = state.board.categories
         .filter((c) => c.id !== id)
@@ -94,7 +101,7 @@ export const deleteCategory = createAsyncThunk(
       if (remaining.length > 0) {
         await batchUpdateCategoryPositions(remaining.map(({ id, position }) => ({ id, position })));
       }
-      await createHistoryEntry('board', 'category_deleted', { categoryId: id }, null, userId);
+      await createHistoryEntry('board', 'category_deleted', `Deleted column "${deletedCategory?.name ?? id}"`, null, userId);
       return { id, remaining };
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message);
@@ -113,7 +120,7 @@ export const reorderCategories = createAsyncThunk(
       await createHistoryEntry(
         'board',
         'categories_reordered',
-        { order: categories.map((c) => c.id) },
+        'Reordered columns',
         null,
         userId
       );

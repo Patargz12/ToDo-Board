@@ -25,11 +25,22 @@ const initialState: HistoryState = {
 };
 
 function mapRow(row: Record<string, unknown>): HistoryEntry {
+  const rawDetails = row.details;
+  let details: string;
+  if (typeof rawDetails === 'string') {
+    details = rawDetails;
+  } else if (typeof rawDetails === 'object' && rawDetails !== null) {
+    const obj = rawDetails as Record<string, unknown>;
+    details = typeof obj.message === 'string' ? obj.message : JSON.stringify(rawDetails);
+  } else {
+    details = String(rawDetails ?? '');
+  }
+
   return {
     id: row.id as string,
     type: row.type as 'board' | 'card',
     action: row.action as string,
-    details: row.details as Record<string, unknown>,
+    details,
     ticketId: row.ticket_id as string | null,
     userId: row.user_id as string,
     createdAt: row.created_at as string,

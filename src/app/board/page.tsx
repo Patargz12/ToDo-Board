@@ -56,11 +56,15 @@ function BoardContent() {
   useExpiryChecker();
 
   useEffect(() => {
+    if (!user?.id) return;
     dispatch(fetchCategories());
     dispatch(fetchTickets());
-    if (user?.id) dispatch(fetchDraftedTicketIds(user.id));
+    dispatch(fetchDraftedTicketIds(user.id));
+  }, [dispatch, user?.id]);
+
+  useEffect(() => {
     if (user?.notificationDaysBefore) dispatch(setDaysBefore(user.notificationDaysBefore));
-  }, [dispatch, user?.id, user?.notificationDaysBefore]);
+  }, [dispatch, user?.notificationDaysBefore]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -120,7 +124,7 @@ function BoardContent() {
         </div>
       ) : (
         <div className="flex-1 overflow-x-auto px-6 py-6">
-          <div className="flex gap-5 items-start justify-center transition-all duration-200 min-h-[calc(100vh-130px)]">
+          <div className="flex gap-5 items-start justify-center  min-h-[calc(100vh-130px)]">
             {categories.map((category) => (
               <CategoryColumn
                 key={category.id}
@@ -144,7 +148,7 @@ function BoardContent() {
             ) : (
               <button
                 onClick={() => setShowAddForm(true)}
-                className="w-72 min-h-14 shrink-0 flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl border border-white/10 bg-white/4 text-slate-400/70 hover:bg-white/8 hover:border-indigo-500/50 hover:text-indigo-300 transition-all duration-200 text-sm font-medium"
+                className="w-72 min-h-14 shrink-0 flex items-center justify-center cursor-pointer gap-2 px-4 py-3.5 rounded-2xl border border-white/10 bg-white/4 text-slate-400/70 hover:bg-white/8 hover:border-primary-500/50 hover:text-primary-300 transition-all duration-200 text-sm font-medium"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <line x1="12" y1="5" x2="12" y2="19" />

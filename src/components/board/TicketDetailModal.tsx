@@ -318,11 +318,9 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
                             {timeAgo(entry.createdAt)}
                           </span>
                         </div>
-                        {entry.details && Object.keys(entry.details).length > 0 && (
+                        {entry.details && (
                           <p className="text-xs text-slate-500 mt-0.5 truncate">
-                            {(entry.details.message as string) ??
-                              (entry.details.title as string) ??
-                              JSON.stringify(entry.details)}
+                            {entry.details}
                           </p>
                         )}
                       </div>

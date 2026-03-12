@@ -36,24 +36,7 @@ function groupByDate(entries: HistoryEntry[]) {
 }
 
 function actionLabel(entry: HistoryEntry) {
-  switch (entry.action) {
-    case 'category_created':
-      return `Created column "${entry.details.name}"`;
-    case 'category_deleted':
-      return `Deleted column "${entry.details.name}"`;
-    case 'category_renamed':
-      return `Renamed "${entry.details.oldName}" → "${entry.details.newName}"`;
-    case 'category_reordered':
-      return 'Reordered columns';
-    case 'ticket_moved':
-      return `Moved "${entry.details.title}" from "${entry.details.from}" → "${entry.details.to}"`;
-    case 'ticket_created':
-      return `Added task "${entry.details.title}"`;
-    case 'ticket_deleted':
-      return `Deleted task "${entry.details.title}"`;
-    default:
-      return entry.action.replace(/_/g, ' ');
-  }
+  return entry.details || entry.action.replace(/_/g, ' ');
 }
 
 export function BoardHistoryPanel({ onClose }: BoardHistoryPanelProps) {

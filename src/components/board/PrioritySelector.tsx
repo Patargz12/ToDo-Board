@@ -88,7 +88,7 @@ export function PrioritySelector({ value, onChange }: PrioritySelectorProps) {
           <button
             type="button"
             onClick={applyCustom}
-            className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold text-black rounded-lg bg-primary transition-colors"
           >
             Apply
           </button>

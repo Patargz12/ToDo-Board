@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 export async function createHistoryEntry(
   type: 'board' | 'card',
   action: string,
-  details: Record<string, unknown>,
+  details: string,
   ticketId: string | null,
   userId: string
 ) {

@@ -123,6 +123,12 @@ export const loadSession = createAsyncThunk(
       clearStoredAuth();
       return rejectWithValue((error as Error).message || 'Session load failed');
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const { auth } = getState() as { auth: AuthState };
+      return !auth.user && !auth.loading;
+    },
   }
 );
 

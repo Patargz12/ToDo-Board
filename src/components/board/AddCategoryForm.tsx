@@ -43,8 +43,8 @@ export function AddCategoryForm({ onClose }: AddCategoryFormProps) {
   };
 
   return (
-    <div className="w-80 flex-shrink-0 bg-white rounded-xl shadow-lg border border-gray-200 p-4 flex flex-col gap-3">
-      <p className="text-sm font-semibold text-gray-700">New column</p>
+    <div className="w-72 flex-shrink-0 bg-slate-800 rounded-2xl shadow-xl border border-white/10 p-4 flex flex-col gap-3">
+      <p className="text-sm font-semibold text-slate-200">New column</p>
       <input
         autoFocus
         type="text"
@@ -52,10 +52,10 @@ export function AddCategoryForm({ onClose }: AddCategoryFormProps) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="w-full border border-gray-300 text-black rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full bg-white/5 border border-white/10 text-slate-200 placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
       />
       <div>
-        <p className="text-xs text-gray-500 mb-2">Color</p>
+        <p className="text-xs text-slate-400 mb-2">Color</p>
         <div className="flex gap-2 flex-wrap">
           {PRESET_COLORS.map((color) => (
             <button
@@ -64,7 +64,7 @@ export function AddCategoryForm({ onClose }: AddCategoryFormProps) {
               className="w-7 h-7 rounded-full transition-transform hover:scale-110 focus:outline-none"
               style={{
                 backgroundColor: color,
-                boxShadow: selectedColor === color ? `0 0 0 3px white, 0 0 0 5px ${color}` : undefined,
+                boxShadow: selectedColor === color ? `0 0 0 2px #1e293b, 0 0 0 4px ${color}` : undefined,
               }}
             />
           ))}
@@ -74,13 +74,13 @@ export function AddCategoryForm({ onClose }: AddCategoryFormProps) {
         <button
           onClick={handleCreate}
           disabled={!name.trim() || loading}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           {loading ? 'Creating…' : 'Create'}
         </button>
         <button
           onClick={onClose}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          className="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-slate-200 text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-white/10"
         >
           Cancel
         </button>

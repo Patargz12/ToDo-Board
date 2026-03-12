@@ -38,6 +38,12 @@ export const fetchTickets = createAsyncThunk(
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message);
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const state = getState() as StateShape;
+      return !state.tickets.loading;
+    },
   }
 );
 
@@ -69,7 +75,7 @@ export const addTicket = createAsyncThunk(
       await createHistoryEntry(
         'card',
         'ticket_created',
-        { ticketId: ticket.id, title: ticket.title },
+        `Added task "${ticket.title}"`,
         ticket.id,
         userId
       );
@@ -140,7 +146,7 @@ export const updateTicket = createAsyncThunk(
       await createHistoryEntry(
         'card',
         'ticket_updated',
-        { message },
+        message,
         id,
         userId
       );
@@ -174,7 +180,7 @@ export const deleteTicket = createAsyncThunk(
       await createHistoryEntry(
         'card',
         'ticket_deleted',
-        { ticketId: ticket.id, title: ticket.title },
+        `Deleted task "${ticket.title}"`,
         ticket.id,
         userId
       );
@@ -232,12 +238,7 @@ export const moveTicket = createAsyncThunk(
       await createHistoryEntry(
         'card',
         'ticket_moved',
-        {
-          ticketId,
-          from: sourceCategory?.name ?? sourceCategoryId,
-          to: targetCategory?.name ?? targetCategoryId,
-          message: `Moved from ${sourceCategory?.name ?? sourceCategoryId} to ${targetCategory?.name ?? targetCategoryId}`,
-        },
+        `Moved from "${sourceCategory?.name ?? sourceCategoryId}" to "${targetCategory?.name ?? targetCategoryId}"`,
         ticketId,
         userId
       );
@@ -245,12 +246,7 @@ export const moveTicket = createAsyncThunk(
       await createHistoryEntry(
         'board',
         'ticket_moved',
-        {
-          ticketId,
-          title: ticket.title,
-          from: sourceCategory?.name ?? sourceCategoryId,
-          to: targetCategory?.name ?? targetCategoryId,
-        },
+        `Moved "${ticket.title}" from "${sourceCategory?.name ?? sourceCategoryId}" to "${targetCategory?.name ?? targetCategoryId}"`,
         ticketId,
         userId
       );
