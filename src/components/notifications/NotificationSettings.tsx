@@ -2,7 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { updateNotificationSettings, setPushEnabled, setDaysBefore } from '@/store/slices/notificationSlice';
+import {
+  updateNotificationSettings,
+  updatePushNotificationSettings,
+  setPushEnabled,
+  setDaysBefore,
+} from '@/store/slices/notificationSlice';
 import { requestPushPermission } from '@/lib/notifications';
 
 interface NotificationSettingsProps {
@@ -45,9 +50,15 @@ export function NotificationSettings({ onClose }: NotificationSettingsProps) {
       const permission = await requestPushPermission();
       if (permission === 'granted') {
         dispatch(setPushEnabled(true));
+        if (user?.id) {
+          dispatch(updatePushNotificationSettings({ pushEnabled: true, userId: user.id }));
+        }
       }
     } else {
       dispatch(setPushEnabled(false));
+      if (user?.id) {
+        dispatch(updatePushNotificationSettings({ pushEnabled: false, userId: user.id }));
+      }
     }
   }
 

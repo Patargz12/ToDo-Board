@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { supabase } from '@/lib/supabase';
 import { User } from '@/types';
-import { storeAuth, clearStoredAuth, getStoredUser, getStoredToken } from '@/lib/auth';
+import { storeAuth, clearStoredAuth } from '@/lib/auth';
 
 interface AuthState {
   user: User | null;
@@ -68,6 +68,7 @@ export const signIn = createAsyncThunk(
         username: profile.username,
         avatarUrl: profile.avatar_url,
         notificationDaysBefore: profile.notification_days_before,
+        notificationPushEnabled: profile.push_enabled,
         createdAt: profile.created_at,
       };
 
@@ -104,21 +105,35 @@ export const loadSession = createAsyncThunk(
   'auth/loadSession',
   async (_, { rejectWithValue }) => {
     try {
-      const storedUser = getStoredUser();
-      const storedToken = getStoredToken();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
-      if (storedUser && storedToken) {
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-
-        if (sessionError || !sessionData.session) {
-          clearStoredAuth();
-          return { user: null, token: null };
-        }
-
-        return { user: storedUser, token: storedToken };
+      if (sessionError || !sessionData.session) {
+        clearStoredAuth();
+        return { user: null, token: null };
       }
 
-      return { user: null, token: null };
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', sessionData.session.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      const user: User = {
+        id: profile.id,
+        email: profile.email,
+        username: profile.username,
+        avatarUrl: profile.avatar_url,
+        notificationDaysBefore: profile.notification_days_before,
+        notificationPushEnabled: profile.push_enabled,
+        createdAt: profile.created_at,
+      };
+
+      storeAuth(sessionData.session.access_token, user);
+
+      return { user, token: sessionData.session.access_token };
+
     } catch (error: unknown) {
       clearStoredAuth();
       return rejectWithValue((error as Error).message || 'Session load failed');

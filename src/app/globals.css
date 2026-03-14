@@ -1,6 +1,10 @@
 @import "tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
+@source "../../.flowbite-react/class-list.json";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
+@import "flowbite/src/themes/default";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -177,4 +181,28 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.15s ease-out;
+}
+
+.app-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) rgba(15, 23, 42, 0.55);
+}
+
+.app-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.app-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 9999px;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.45) 0%, rgba(100, 116, 139, 0.55) 100%);
+  border: 2px solid rgba(15, 23, 42, 0.55);
+  border-radius: 9999px;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(251, 168, 226, 0.65) 0%, rgba(167, 139, 250, 0.55) 100%);
 }

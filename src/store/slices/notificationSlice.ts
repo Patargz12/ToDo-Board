@@ -42,6 +42,25 @@ export const updateNotificationSettings = createAsyncThunk(
   }
 );
 
+export const updatePushNotificationSettings = createAsyncThunk(
+  'notifications/updatePushNotificationSettings',
+  async (
+    { pushEnabled, userId }: { pushEnabled: boolean; userId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ push_enabled: pushEnabled })
+        .eq('id', userId);
+      if (error) throw error;
+      return pushEnabled;
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
+    }
+  }
+);
+
 const notificationSlice = createSlice({
   name: 'notifications',
   initialState,
@@ -63,6 +82,9 @@ const notificationSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(updateNotificationSettings.fulfilled, (state, action) => {
       state.notificationSettings.daysBefore = action.payload;
+    });
+    builder.addCase(updatePushNotificationSettings.fulfilled, (state, action) => {
+      state.notificationSettings.pushEnabled = action.payload;
     });
   },
 });

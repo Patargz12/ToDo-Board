@@ -1,14 +1,21 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { removeToast, Toast } from '@/store/slices/notificationSlice';
 
 const typeStyles: Record<Toast['type'], string> = {
-  info: 'bg-blue-50 border-blue-300 text-blue-800',
-  warning: 'bg-amber-50 border-amber-300 text-amber-800',
-  error: 'bg-red-50 border-red-300 text-red-800',
-  success: 'bg-green-50 border-green-300 text-green-800',
+  info: 'border-sky-400/30 text-slate-200',
+  warning: 'border-amber-400/35 text-slate-200',
+  error: 'border-rose-400/35 text-slate-200',
+  success: 'border-emerald-400/35 text-slate-200',
+};
+
+const iconWrapStyles: Record<Toast['type'], string> = {
+  info: 'bg-sky-400/15 text-sky-300',
+  warning: 'bg-amber-400/15 text-amber-300',
+  error: 'bg-rose-400/15 text-rose-300',
+  success: 'bg-emerald-400/15 text-emerald-300',
 };
 
 const iconPaths: Record<Toast['type'], string> = {
@@ -22,15 +29,36 @@ function ToastItem({ toast }: { toast: Toast }) {
   const dispatch = useAppDispatch();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const closingRef = useRef(false);
+
+  const closeWithAnimation = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    if (containerRef.current) {
+      containerRef.current.style.transition = 'opacity 320ms cubic-bezier(0.22, 1, 0.36, 1), transform 320ms cubic-bezier(0.22, 1, 0.36, 1)';
+      containerRef.current.style.opacity = '0';
+      containerRef.current.style.transform = 'translateX(110%)';
+      setTimeout(() => dispatch(removeToast(toast.id)), 320);
+      return;
+    }
+
+    dispatch(removeToast(toast.id));
+  }, [dispatch, toast.id]);
 
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.style.opacity = '0';
-      containerRef.current.style.transform = 'translateX(100%)';
+      containerRef.current.style.transform = 'translateX(110%)';
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           if (containerRef.current) {
-            containerRef.current.style.transition = 'opacity 300ms ease, transform 300ms ease';
+            containerRef.current.style.transition = 'opacity 320ms cubic-bezier(0.22, 1, 0.36, 1), transform 320ms cubic-bezier(0.22, 1, 0.36, 1)';
             containerRef.current.style.opacity = '1';
             containerRef.current.style.transform = 'translateX(0)';
           }
@@ -39,45 +67,45 @@ function ToastItem({ toast }: { toast: Toast }) {
     }
 
     timerRef.current = setTimeout(() => {
-      dispatch(removeToast(toast.id));
+      closeWithAnimation();
     }, 5000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [dispatch, toast.id]);
+  }, [closeWithAnimation]);
 
   function handleClose() {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    if (containerRef.current) {
-      containerRef.current.style.transition = 'opacity 250ms ease, transform 250ms ease';
-      containerRef.current.style.opacity = '0';
-      containerRef.current.style.transform = 'translateX(100%)';
-      setTimeout(() => dispatch(removeToast(toast.id)), 250);
-    } else {
-      dispatch(removeToast(toast.id));
-    }
+    closeWithAnimation();
   }
 
   return (
     <div
       ref={containerRef}
-      className={`flex items-center gap-3 min-w-72 max-w-sm w-full px-4 py-3 rounded-xl border shadow-lg ${typeStyles[toast.type]}`}
+      className={`flex items-center w-full max-w-sm p-4 rounded-xl border bg-slate-900/95 backdrop-blur-xl shadow-[0_12px_28px_rgba(2,6,23,0.65)] ${typeStyles[toast.type]}`}
+      role="alert"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-5 h-5 shrink-0"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d={iconPaths[toast.type]} />
-      </svg>
-      <p className="text-sm font-medium flex-1 leading-snug">{toast.message}</p>
+      <div className={`inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg ${iconWrapStyles[toast.type]}`}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d={iconPaths[toast.type]} />
+        </svg>
+      </div>
+
+      <div className="ms-3 text-sm font-medium leading-snug border-s ps-3 flex-1 min-w-0 border-white/10">
+        {toast.message}
+      </div>
+
       <button
+        type="button"
         onClick={handleClose}
-        className="shrink-0 ml-1 opacity-60 hover:opacity-100 transition-opacity"
+        className="ms-auto -mx-1.5 -my-1.5 shrink-0 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 text-slate-400 hover:text-slate-100 hover:bg-white/8 transition-colors"
         aria-label="Close"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -93,7 +121,7 @@ export function ToastContainer() {
   const toasts = useAppSelector((state) => state.notifications.toasts);
 
   return (
-    <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none">
+    <div className="fixed top-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none animate-in fade-in duration-200 delay-300">
       {toasts.map((toast) => (
         <div key={toast.id} className="pointer-events-auto">
           <ToastItem toast={toast} />

@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
         username,
         avatar_url: null,
         notification_days_before: 1,
+        push_enabled: false,
       }, { onConflict: 'id' });
 
     if (profileError) {
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
       username,
       avatarUrl: null as string | null,
       notificationDaysBefore: 1,
+      notificationPushEnabled: false,
       createdAt: createData.user.created_at,
     };
 

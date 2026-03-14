@@ -4,6 +4,7 @@ create table profiles (
   email text not null,
   avatar_url text,
   notification_days_before integer default 1,
+  push_enabled boolean default false,
   created_at timestamptz default now()
 );
 

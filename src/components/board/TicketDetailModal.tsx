@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { format } from 'date-fns';
 import { Ticket } from '@/types';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { updateTicket, deleteTicket, moveTicket } from '@/store/slices/ticketsSlice';
@@ -9,6 +10,19 @@ import { fetchCardHistory } from '@/store/slices/historySlice';
 import { useDraftSave } from '@/hooks/useDraftSave';
 import { PrioritySelector } from './PrioritySelector';
 import { Button } from '@/components/ui/Button';
+import { DueDateField } from './DueDateField';
+
+function parseExpiryDate(value: string): Date | undefined {
+  if (!value) return undefined;
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+}
+
+function normalizeExpiryDate(value: string): string {
+  const parsed = parseExpiryDate(value);
+  return parsed ? format(parsed, 'yyyy-MM-dd') : '';
+}
 
 function timeAgo(dateStr: string): string {
   const now = new Date();
@@ -43,7 +57,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
 
   const [title, setTitle] = useState(ticket.title);
   const [description, setDescription] = useState(ticket.description);
-  const [expiryDate, setExpiryDate] = useState(ticket.expiryDate ? ticket.expiryDate.slice(0, 16) : '');
+  const [expiryDate, setExpiryDate] = useState(normalizeExpiryDate(ticket.expiryDate));
   const [priorityLabel, setPriorityLabel] = useState(ticket.priorityLabel);
   const [priorityColor, setPriorityColor] = useState(ticket.priorityColor);
   const [priorityOrder, setPriorityOrder] = useState(ticket.priorityOrder);
@@ -65,7 +79,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
       draftAppliedRef.current = true;
       setTitle(draft.title || ticket.title);
       setDescription(draft.description);
-      setExpiryDate(draft.expiryDate || (ticket.expiryDate ? ticket.expiryDate.slice(0, 16) : ''));
+      setExpiryDate(normalizeExpiryDate(draft.expiryDate || ticket.expiryDate));
       if (draft.priorityLabel) setPriorityLabel(draft.priorityLabel);
       if (draft.priorityColor) setPriorityColor(draft.priorityColor);
       if (draft.priorityOrder !== undefined) setPriorityOrder(draft.priorityOrder);
@@ -77,7 +91,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
   const isDirty =
     title !== ticket.title ||
     description !== ticket.description ||
-    expiryDate !== (ticket.expiryDate ? ticket.expiryDate.slice(0, 16) : '') ||
+    expiryDate !== normalizeExpiryDate(ticket.expiryDate) ||
     priorityLabel !== ticket.priorityLabel ||
     priorityColor !== ticket.priorityColor ||
     priorityOrder !== ticket.priorityOrder ||
@@ -150,7 +164,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
-      <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl h-[85vh] sm:h-auto sm:max-h-[80vh] flex flex-col overflow-hidden">
+      <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-t-2xl sm:rounded-2xl w-full sm:w-[44rem] h-[75vh] sm:h-[70vh] flex flex-col overflow-hidden">
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-white/[0.07] shrink-0">
           <div className="flex-1 pr-4">
             {editingTitle ? (
@@ -162,11 +176,11 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === 'Escape') setEditingTitle(false);
                 }}
-                className="w-full text-lg font-semibold text-slate-100 border-b-2 border-indigo-500 outline-none bg-transparent pb-0.5"
+                className="w-full text-lg font-regular text-slate-100 border-b-2 border-primary outline-none bg-transparent pb-0.5"
               />
             ) : (
               <h2
-                className="text-lg font-semibold text-slate-100 cursor-pointer hover:text-indigo-300 transition-colors"
+                className="text-lg font-regular text-slate-100 cursor-pointer hover:opacity-90 transition-colors"
                 onClick={() => setEditingTitle(true)}
                 title="Click to edit title"
               >
@@ -176,7 +190,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
           </div>
           <button
             onClick={handleClose}
-            className="p-1.5 rounded-lg text-slate-500 hover:bg-white/8 hover:text-slate-200 transition-colors shrink-0"
+            className="p-1.5 rounded-lg text-white hover:bg-white/8 hover:text-slate-200 transition-colors shrink-0"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -190,8 +204,8 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
             onClick={() => setActiveTab('details')}
             className={`px-6 py-2.5 text-sm font-medium transition-colors border-b-2 ${
               activeTab === 'details'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-500 hover:text-slate-300'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-white hover:text-slate-300'
             }`}
           >
             Details
@@ -200,8 +214,8 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
             onClick={() => setActiveTab('history')}
             className={`px-6 py-2.5 text-sm font-medium transition-colors border-b-2 ${
               activeTab === 'history'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-500 hover:text-slate-300'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-white hover:text-slate-300'
             }`}
           >
             History
@@ -213,7 +227,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className={`flex-1 ${activeTab === 'history' ? 'overflow-y-auto app-scrollbar' : 'overflow-visible'}`}>
           {activeTab === 'details' && (
             <div className="px-6 py-5 flex flex-col gap-5">
               {draftRestored && draftApplied && (
@@ -234,13 +248,13 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <label className="text-xs font-regular uppercase tracking-wider text-white">
                     Description
                   </label>
                   {isDirty && (
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                      <span className="text-xs text-slate-500">Unsaved changes</span>
+                      <span className="text-xs text-white">Unsaved changes</span>
                     </div>
                   )}
                 </div>
@@ -255,19 +269,15 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 block">
-                    Expiry Date
-                  </label>
-                  <input
-                    type="datetime-local"
+                  <DueDateField
+                    label="Expiry Date"
                     value={expiryDate}
-                    onChange={(e) => setExpiryDate(e.target.value)}
-                    className="w-full text-sm text-slate-200 bg-white/6 border border-white/10 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/50 scheme-dark transition-all"
+                    onChange={setExpiryDate}
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 block">
+                  <label className="text-xs font-regular uppercase tracking-wider text-white mb-2 block">
                     Category
                   </label>
                   <select
@@ -285,7 +295,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
               </div>
 
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 block">
+                <label className="text-xs font-regular uppercase tracking-wider text-white mb-2 block">
                   Priority
                 </label>
                 <PrioritySelector
@@ -303,7 +313,7 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
           {activeTab === 'history' && (
             <div className="px-6 py-5">
               {cardHistory.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-10">No history yet</p>
+                <p className="text-sm text-white text-center py-10">No history yet</p>
               ) : (
                 <div className="flex flex-col gap-3">
                   {cardHistory.map((entry) => (
@@ -314,12 +324,12 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
                           <span className="text-sm font-medium text-slate-300">
                             {formatActionLabel(entry.action)}
                           </span>
-                          <span className="text-xs text-slate-500 shrink-0">
+                          <span className="text-xs text-white shrink-0">
                             {timeAgo(entry.createdAt)}
                           </span>
                         </div>
                         {entry.details && (
-                          <p className="text-xs text-slate-500 mt-0.5 truncate">
+                          <p className="text-xs text-white mt-0.5 truncate">
                             {entry.details}
                           </p>
                         )}

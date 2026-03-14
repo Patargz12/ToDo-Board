@@ -4,6 +4,7 @@ export interface User {
   username: string;
   avatarUrl: string | null;
   notificationDaysBefore: number;
+  notificationPushEnabled: boolean;
   createdAt: string;
 }
 

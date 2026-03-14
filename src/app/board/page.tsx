@@ -15,7 +15,7 @@ import { fetchDraftedTicketIds } from '@/store/slices/draftsSlice';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import { useExpiryChecker } from '@/hooks/useExpiryChecker';
 import { ToastContainer } from '@/components/notifications/ToastContainer';
-import { setDaysBefore } from '@/store/slices/notificationSlice';
+import { setDaysBefore, setPushEnabled } from '@/store/slices/notificationSlice';
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -34,6 +34,7 @@ function BoardContent() {
   const dispatch = useAppDispatch();
   const { categories, loading } = useAppSelector((state) => state.board);
   const user = useAppSelector((state) => state.auth.user);
+  const pushEnabled = useAppSelector((state) => state.notifications.notificationSettings.pushEnabled);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [quickCreateCategoryId, setQuickCreateCategoryId] = useState<string | null>(null);
@@ -66,6 +67,12 @@ function BoardContent() {
     if (user?.notificationDaysBefore) dispatch(setDaysBefore(user.notificationDaysBefore));
   }, [dispatch, user?.notificationDaysBefore]);
 
+  useEffect(() => {
+    if (typeof user?.notificationPushEnabled === 'boolean') {
+      dispatch(setPushEnabled(user.notificationPushEnabled));
+    }
+  }, [dispatch, user?.notificationPushEnabled]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
@@ -86,7 +93,7 @@ function BoardContent() {
   return (
     <div className="flex flex-col h-screen bg-slate-900">
       <Navbar onOpenHistory={() => setShowHistory(true)} />
-      <ToastContainer />
+      {pushEnabled && <ToastContainer />}
 
       {showHistory && <BoardHistoryPanel onClose={() => setShowHistory(false)} />}
 
