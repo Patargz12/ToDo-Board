@@ -1,34 +1,3 @@
-## What's in it
-
-**Columns you actually control.** Add them, rename them, reorder them, delete them. Drag a column header left or right to reorganize your layout however you want.
-
-**Tasks with enough context to be useful.** Every ticket has a title, description, due date, and priority. Click any card to open the full detail view.
-
-**Drag and drop.** Move tickets between columns or reorder them within a column. It's built on the native HTML5 drag API — no extra libraries, no bloat.
-
-**Draft saving.** Started editing a ticket and closed it without saving? It remembers. Come back to it later and it'll restore exactly where you left off.
-
-**Expiry alerts.** Tickets near or past their due date get color-coded badges so they stand out. You can configure how far in advance you want the warnings to kick in.
-
-**Board history.** There's a slide-out panel in the navbar that logs everything that's happened — tasks created, moved, renamed, deleted — grouped by date and paginated so it stays readable.
-
-**Mobile friendly.** On smaller screens, columns switch to a tab-based layout so it's actually usable on your phone.
-
-**Auth.** Email/password login through Supabase Auth. Your board data stays tied to your account.
-
-## Stack
-
-Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Redux Toolkit, and Supabase for auth and the database. Drag and drop is native HTML5 so there are no extra dependencies there. Docker support is included if you'd rather run it in a container.
-
-## Try the demo
-
-There's a live instance running with some pre-seeded data. Log in with these credentials and poke around — no setup needed:
-
-```
-Email:    demo@taskboard.dev
-Password: demo1234
-```
-
 ## Getting started
 
 You'll need Node 18+ and a free [Supabase](https://supabase.com) project.
@@ -61,7 +30,7 @@ Open [http://localhost:3000](http://localhost:3000) and you're in.
 
 ## Running with Docker
 
-The Docker setup is a multi-stage build — it handles deps, the build step, and produces a lean Alpine production image. You'll need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
+The Docker setup is a multi-stage build it handles deps, the build step, and produces a lean Alpine production image. You'll need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
 
 Clone the repo and set up your environment variables:
 
@@ -97,3 +66,36 @@ docker compose logs -f
 docker compose down
 
 ```
+
+
+## What's in it
+
+**Columns you actually control.** Add them, rename them, reorder them, delete them. Drag a column header left or right to reorganize your layout however you want.
+
+**Tasks with enough context to be useful.** Every ticket has a title, description, due date, and priority. Click any card to open the full detail view.
+
+**Drag and drop.** Move tickets between columns or reorder them within a column. It's built on the native HTML5 drag API — no extra libraries, no bloat.
+
+**Draft saving.** Started editing a ticket and closed it without saving? It remembers. Come back to it later and it'll restore exactly where you left off.
+
+**Expiry alerts.** Tickets near or past their due date get color-coded badges so they stand out. You can configure how far in advance you want the warnings to kick in.
+
+**Board history.** There's a slide-out panel in the navbar that logs everything that's happened — tasks created, moved, renamed, deleted — grouped by date and paginated so it stays readable.
+
+**Mobile friendly.** On smaller screens, columns switch to a tab-based layout so it's actually usable on your phone.
+
+**Auth.** Email/password login through Supabase Auth. Your board data stays tied to your account.
+
+## Stack
+
+Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Redux Toolkit, and Supabase for auth and the database. Drag and drop is native HTML5 so there are no extra dependencies there. Docker support is included if you'd rather run it in a container.
+
+## Try the demo
+
+There's a live instance running with some pre-seeded data. Log in with these credentials and poke around — no setup needed:
+
+```
+Email:    demo@taskboard.dev
+Password: demo1234
+```
+
