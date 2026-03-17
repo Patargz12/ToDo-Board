@@ -177,13 +177,15 @@ export const deleteTicket = createAsyncThunk(
         await batchUpdateTicketPositions(remaining.map(({ id, position }) => ({ id, position })));
       }
 
-      await createHistoryEntry(
-        'card',
-        'ticket_deleted',
-        `Deleted task "${ticket.title}"`,
-        ticket.id,
-        userId
-      );
+      try {
+        await createHistoryEntry(
+          'card',
+          'ticket_deleted',
+          `Deleted task "${ticket.title}"`,
+          ticket.id,
+          userId
+        );
+      } catch {}
 
       return { id: ticket.id, categoryId: ticket.categoryId, remaining };
     } catch (error: unknown) {

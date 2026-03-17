@@ -34,7 +34,6 @@ function BoardContent() {
   const dispatch = useAppDispatch();
   const { categories, loading } = useAppSelector((state) => state.board);
   const user = useAppSelector((state) => state.auth.user);
-  const pushEnabled = useAppSelector((state) => state.notifications.notificationSettings.pushEnabled);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [quickCreateCategoryId, setQuickCreateCategoryId] = useState<string | null>(null);
@@ -93,7 +92,7 @@ function BoardContent() {
   return (
     <div className="flex flex-col h-screen bg-slate-900">
       <Navbar onOpenHistory={() => setShowHistory(true)} />
-      {pushEnabled && <ToastContainer />}
+      <ToastContainer />
 
       {showHistory && <BoardHistoryPanel onClose={() => setShowHistory(false)} />}
 

@@ -11,6 +11,7 @@ import { useDraftSave } from '@/hooks/useDraftSave';
 import { PrioritySelector } from './PrioritySelector';
 import { Button } from '@/components/ui/Button';
 import { DueDateField } from './DueDateField';
+import { toast } from '@/lib/toast';
 
 function parseExpiryDate(value: string): Date | undefined {
   if (!value) return undefined;
@@ -152,7 +153,10 @@ export function TicketDetailModal({ ticket, onClose }: Props) {
   async function handleDelete() {
     onClose();
     await clearDraft().catch(() => {});
-    dispatch(deleteTicket(ticket));
+    try {
+      await dispatch(deleteTicket(ticket)).unwrap();
+      toast.success('Ticket deleted successfully.');
+    } catch {}
   }
 
   function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {

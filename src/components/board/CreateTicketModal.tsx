@@ -6,6 +6,7 @@ import { addTicket } from '@/store/slices/ticketsSlice';
 import { PrioritySelector } from './PrioritySelector';
 import { Button } from '@/components/ui/Button';
 import { DueDateField } from './DueDateField';
+import { toast } from '@/lib/toast';
 
 interface CreateTicketModalProps {
   categoryId: string;
@@ -62,6 +63,7 @@ export function CreateTicketModal({ categoryId, onClose }: CreateTicketModalProp
           categoryId,
         })
       ).unwrap();
+      toast.success('Ticket created successfully.');
       onClose();
     } catch {
       setSubmitting(false);
