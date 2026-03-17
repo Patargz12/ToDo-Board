@@ -7,11 +7,6 @@ export async function POST(request: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
-
-  const supabaseClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
   try {
     const { email, password, username } = await request.json();
 
@@ -54,29 +49,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: profileError.message }, { status: 500 });
     }
 
-    const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError || !signInData.session) {
-      return NextResponse.json(
-        { error: 'Account created. Please sign in.' },
-        { status: 200 }
-      );
-    }
-
-    const user = {
-      id: createData.user.id,
-      email,
-      username,
-      avatarUrl: null as string | null,
-      notificationDaysBefore: 1,
-      notificationPushEnabled: false,
-      createdAt: createData.user.created_at,
-    };
-
-    return NextResponse.json({ user, token: signInData.session.access_token }, { status: 201 });
+    return NextResponse.json({ message: 'Registration successful. Please sign in.' }, { status: 201 });
   } catch (err: unknown) {
     return NextResponse.json(
       { error: (err as Error).message || 'Registration failed.' },

@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import { signIn, signUp } from '@/store/slices/authSlice';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
+import { toast } from '@/lib/toast';
+import { ToastContainer } from '@/components/notifications/ToastContainer';
 
 const SIGNIN_KEY = 'draft_signin';
 const SIGNUP_KEY = 'draft_signup';
@@ -113,9 +115,22 @@ export default function LoginPage() {
     }
 
     if (result.meta.requestStatus === 'fulfilled') {
-      localStorage.removeItem(SIGNIN_KEY);
-      localStorage.removeItem(SIGNUP_KEY);
-      localStorage.removeItem(MODE_KEY);
+      if (mode === 'signup') {
+        toast.success('Registration successful. Please sign in.');
+        writeDraft(SIGNIN_KEY, { email });
+        localStorage.setItem(MODE_KEY, 'signin');
+        localStorage.removeItem(SIGNUP_KEY);
+        setMode('signin');
+        setPassword('');
+        setConfirmPassword('');
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+        setFieldErrors({});
+      } else {
+        localStorage.removeItem(SIGNIN_KEY);
+        localStorage.removeItem(SIGNUP_KEY);
+        localStorage.removeItem(MODE_KEY);
+      }
     }
   };
 
@@ -140,48 +155,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 px-4">
-      <div className="flex flex-col items-center mb-8 select-none">
-        <div className="mb-4">
-          <Image src="/todoboard_icon.png" alt="TaskBoard logo" width={84} height={84}/>
+    <>
+      <ToastContainer />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 px-4">
+        <div className="flex flex-col items-center mb-8 select-none">
+          <div className="mb-4">
+            <Image src="/todoboard_icon.png" alt="TaskBoard logo" width={84} height={84}/>
+          </div>
+          <h1 className="text-2xl font-bold text-slate-200">TaskBoard</h1>
+          <p className="text-sm text-slate-500 mt-1">Organize your tasks with ease</p>
         </div>
-        <h1 className="text-2xl font-bold text-slate-200">TaskBoard</h1>
-        <p className="text-sm text-slate-500 mt-1">Organize your tasks with ease</p>
-      </div>
 
-      <div className="w-full max-w-sm">
-        <div className="bg-slate-900 border border-white/10 rounded-2xl shadow-2xl px-8 py-8">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-slate-100">Welcome back</h2>
-            <p className="text-sm text-slate-500 mt-0.5">Sign in to your account or create a new one</p>
-          </div>
+        <div className="w-full max-w-sm">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl shadow-2xl px-8 py-8">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-slate-100">Welcome back</h2>
+              <p className="text-sm text-slate-500 mt-0.5">Sign in to your account or create a new one</p>
+            </div>
 
-          <div className="flex items-center bg-white/6 border border-white/10 rounded-xl p-1 mb-6">
-            <button
-              type="button"
-              onClick={() => switchMode('signin')}
-              disabled={loading}
-              className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                mode === 'signin'
-                  ? 'bg-white/10 text-slate-100 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              Login
-            </button>
-            <button
-              type="button"
-              onClick={() => switchMode('signup')}
-              disabled={loading}
-              className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                mode === 'signup'
-                  ? 'bg-white/10 text-slate-100 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              Register
-            </button>
-          </div>
+            <div className="flex items-center bg-white/6 border border-white/10 rounded-xl p-1 mb-6">
+              <button
+                type="button"
+                onClick={() => switchMode('signin')}
+                disabled={loading}
+                className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  mode === 'signin'
+                    ? 'bg-white/10 text-slate-100 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode('signup')}
+                disabled={loading}
+                className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  mode === 'signup'
+                    ? 'bg-white/10 text-slate-100 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                Register
+              </button>
+            </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {mode === 'signup' && (
@@ -331,8 +348,9 @@ export default function LoginPage() {
               {mode === 'signin' ? 'Login' : 'Register'}
             </Button>
           </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

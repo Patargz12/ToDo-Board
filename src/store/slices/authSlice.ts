@@ -33,9 +33,7 @@ export const signUp = createAsyncThunk(
         return rejectWithValue(data.error || 'Registration failed.');
       }
 
-      storeAuth(data.token, data.user);
-
-      return { user: data.user, token: data.token };
+      return { message: data.message || 'Registration successful. Please sign in.' };
     } catch (error: unknown) {
       return rejectWithValue((error as Error).message || 'Registration failed.');
     }
@@ -166,10 +164,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(signUp.fulfilled, (state, action) => {
+      .addCase(signUp.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = null;
+        state.token = null;
         state.error = null;
       })
       .addCase(signUp.rejected, (state, action) => {
