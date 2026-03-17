@@ -1,34 +1,33 @@
-# TaskBoard
-
-A personal kanban board I built to actually keep track of things without relying on a third-party SaaS tool. It's a full-stack Next.js app backed by Supabase — you can drag tasks between columns, set due dates, get notified before things go overdue, and see a running history of everything that's happened on the board.
-
-Nothing groundbreaking here, just a well-built tool that does what it needs to do.
-
 ## What's in it
 
-- **Columns you control** — add, rename, reorder, and delete columns however you like. Drag them around by the header to reorganize.
-- **Tasks with context** — each ticket has a title, description, due date, and priority. Click any card to open the full detail view.
-- **Drag and drop** — move tickets between columns or reorder them within a column. Built with the native HTML5 drag API, no extra libraries.
-- **Draft saving** — if you start editing a ticket and close it without saving, the draft is kept and restored next time you open it.
-- **Expiry alerts** — tickets close to or past their due date get color-coded badges. You can also configure how far in advance you want to be warned.
-- **Board history** — there's a slide-out panel in the navbar that shows everything that's happened on the board, grouped by date and paginated.
-- **Works on mobile** — columns switch to a tab-based layout on smaller screens so it's actually usable.
-- **Auth** — email/password login via Supabase Auth. Board data is tied to your account.
+**Columns you actually control.** Add them, rename them, reorder them, delete them. Drag a column header left or right to reorganize your layout however you want.
+
+**Tasks with enough context to be useful.** Every ticket has a title, description, due date, and priority. Click any card to open the full detail view.
+
+**Drag and drop.** Move tickets between columns or reorder them within a column. It's built on the native HTML5 drag API — no extra libraries, no bloat.
+
+**Draft saving.** Started editing a ticket and closed it without saving? It remembers. Come back to it later and it'll restore exactly where you left off.
+
+**Expiry alerts.** Tickets near or past their due date get color-coded badges so they stand out. You can configure how far in advance you want the warnings to kick in.
+
+**Board history.** There's a slide-out panel in the navbar that logs everything that's happened — tasks created, moved, renamed, deleted — grouped by date and paginated so it stays readable.
+
+**Mobile friendly.** On smaller screens, columns switch to a tab-based layout so it's actually usable on your phone.
+
+**Auth.** Email/password login through Supabase Auth. Your board data stays tied to your account.
 
 ## Stack
 
-Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Redux Toolkit, Supabase (Auth + Postgres). Drag and drop is native HTML5 — no extra deps for that. Docker support included if you'd rather not run it bare.
+Next.js 15 (App Router), TypeScript, Tailwind CSS 4, Redux Toolkit, and Supabase for auth and the database. Drag and drop is native HTML5 so there are no extra dependencies there. Docker support is included if you'd rather run it in a container.
 
-## Demo
+## Try the demo
 
-A live instance is running with pre-seeded data. You can log in with these credentials without any setup:
+There's a live instance running with some pre-seeded data. Log in with these credentials and poke around — no setup needed:
 
 ```
 Email:    demo@taskboard.dev
 Password: demo1234
 ```
-
-> This account is read/write — feel free to create, move, and delete tasks.
 
 ## Getting started
 
@@ -36,62 +35,40 @@ You'll need Node 18+ and a free [Supabase](https://supabase.com) project.
 
 ```bash
 git clone https://github.com/Patargz12/ToDo-Board.git
-cd todoboard
+cd todo-board
+code .
 npm install
-cp .env.example .env.local
+Create a .env.local ( .env.example has the values , just copy and paste in the .env.local )
 ```
-
-Open `.env.local` and drop in your Supabase project URL and anon key:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-Then set up the database — go to the Supabase SQL editor and run the contents of `src/db/schema.sql`. That'll create all the tables. Make sure Email is enabled under **Authentication → Providers** and you're good.
 
 ```bash
 npm run dev
 ```
 
-Hit [http://localhost:3000](http://localhost:3000) and you're in.
+Open [http://localhost:3000](http://localhost:3000) and you're in.
 
 ## Using the app
 
-Once you're logged in, here's how everything works:
+**Setting up your board.** When you first log in, the board will be empty. Hit **Add column** to create your first one — "To Do", "In Progress", "Done", or whatever fits your workflow. You can add as many as you want and rename them later by double-clicking the header. Drag columns by their header to reorder them.
 
-**Setting up your board**
+**Adding and editing tasks.** Click **Add task** at the bottom of any column to open the create form. Fill in a title, description, due date, and priority, then save. To edit something later, just click the card. Any unsaved changes are automatically kept as a draft, so if you close the detail view mid-edit, it'll be there when you come back.
 
-When you first land on the board, it'll be empty. Click **Add column** to create your first column — something like "To Do", "In Progress", "Done", or whatever workflow makes sense for you. You can add as many columns as you want and rename them later by double-clicking the column header. Drag columns left or right by their header to reorder them.
+**Moving tasks around.** Drag a card to a different column or drop it between other cards to reorder. The browser handles all of this natively so it's responsive without any extra plugins.
 
-**Adding and editing tasks**
+**Staying on top of due dates.** Tickets close to their due date show a colored badge, and overdue ones are marked differently so they're easy to spot. Click the bell icon in the navbar to set how far in advance you want warnings to appear — the default is a few days out.
 
-Click **Add task** at the bottom of any column to open the create form. Give it a title, optionally a description, a due date, and a priority level, then save. To edit a task later, just click the card and the detail view opens. Any changes you leave unsaved are automatically kept as a draft — if you come back to that ticket, it'll restore where you left off.
+**Board history.** The **History** button in the navbar opens a side panel with a full log of activity on your board. It's grouped by date and paginated, so even on an older board it doesn't become a wall of text.
 
-Press **N** anywhere on the board to quickly open a new task form for the first column, handy if you're just trying to capture something fast.
+## Running with Docker
 
-**Moving tasks around**
+The Docker setup is a multi-stage build — it handles deps, the build step, and produces a lean Alpine production image. You'll need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
 
-Drag any ticket card to a different column or drop it between cards to reorder it. The board uses the browser's native drag and drop — no plugins — so it's pretty responsive.
-
-**Staying on top of due dates**
-
-Tickets that are close to their due date will show a colored badge. Overdue ones are marked differently so they stand out. Click the bell icon in the navbar to configure how far in advance you want to start seeing warnings — default is a few days out, but you can tune it.
-
-**Board history**
-
-The **History** button in the navbar opens a side panel with a log of everything that's happened on your board — tasks created, moved, renamed, deleted. It's grouped by date and paginated so it doesn't get overwhelming.
-
-## Docker
-
-Runs as a multi-stage build — deps, build, and a lean Alpine production image. Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-
-**1. Clone and set up environment variables**
+Clone the repo and set up your environment variables:
 
 ```bash
 git clone https://github.com/Patargz12/ToDo-Board.git
-cd todoboard
-cp .env.example .env.local
+cd todo-board
+Create a .env.local ( .env.example has the values , just copy and paste )
 ```
 
 Open `.env.local` and fill in your Supabase credentials:
@@ -102,29 +79,21 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 ```
 
-You can find all three values at **Supabase Dashboard → Project Settings → API**.
-
-Before building, set up the database — go to your Supabase SQL editor and run the contents of `src/db/schema.sql`.
-
-**2. Build and start**
+Then build and start it:
 
 ```bash
 docker compose --env-file .env.local up --build -d
 ```
 
-**3. Open the app**
+Visit http://localhost:3000 and you're up.
 
-Visit [http://localhost:3000](http://localhost:3000).
-
-**Other useful commands**
+A few other commands worth knowing:
 
 ```bash
-# View live logs
+# Stream live logs
 docker compose logs -f
 
-# Stop the container
+# Shut it down
 docker compose down
 
-# Rebuild after code changes
-docker compose --env-file .env.local up --build -d
 ```
